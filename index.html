@@ -1,10 +1,10 @@
-<!DOCTYPE html>
+<!doctype html>
 <html>
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>NutriPlan - Food, Nutrition & Fitness Planner</title>
-    <link rel="icon" href="./src/images/favicon.png">
+    <link rel="icon" href="./src/images/favicon.png" />
     <script>
       window.FontAwesomeConfig = { autoReplaceSvg: "nest" };
     </script>
@@ -181,16 +181,15 @@
             </div>
           </div>
 
-          <div class="flex items-center gap-3 overflow-x-auto pb-2">
+          <div class="flex items-center gap-3 overflow-x-auto pb-2"
+          id="cuisine-grid"
+          >
             <button
-              class="px-4 py-2 bg-emerald-600 text-white rounded-full font-medium text-sm whitespace-nowrap hover:bg-emerald-700 transition-all"
+              class="px-4 py-2 bg-emerald-600 text-white rounded-full font-medium text-sm whitespace-nowrap hover:bg-emerald-700 transition-all areaBtn"
+              data-value=""
+              id="allRecipesBtn"
             >
               All Recipes
-            </button>
-            <button
-              class="px-4 py-2 bg-gray-100 text-gray-700 rounded-full font-medium text-sm whitespace-nowrap hover:bg-gray-200 transition-all"
-            >
-              Egyptain
             </button>
           </div>
         </div>
@@ -215,19 +214,19 @@
           </div>
 
           <div id="categories-grid" class="grid grid-cols-6 gap-3">
-            <!-- Categories will be loaded here by JavaScript -->
             <div
-              class="category-card bg-gradient-to-br from-emerald-50 to-teal-50 rounded-xl p-3 border border-emerald-200 hover:border-emerald-400 hover:shadow-md cursor-pointer transition-all group"
-              data-category="Beef"
+              class="category-card bg-gradient-to-br rounded-xl p-3 border hover:shadow-md cursor-pointer transition-all group from-emerald-500 to-green-500 text-white border-emerald-500 hover:border-emerald-600"
+              data-category="All"
+              id="all-types-div"
             >
               <div class="flex items-center gap-2.5">
                 <div
                   class="text-white w-9 h-9 bg-gradient-to-br from-emerald-400 to-green-500 rounded-lg flex items-center justify-center group-hover:scale-110 transition-transform shadow-sm"
                 >
-                  <i class="fa-solid fa-drumstick-bite"></i>
+                  <i class="fa-solid fa-utensils"></i>
                 </div>
                 <div>
-                  <h3 class="text-sm font-bold text-gray-900">Beef</h3>
+                  <h3 class="text-sm font-bold text-gray-900">All types</h3>
                 </div>
               </div>
             </div>
@@ -265,57 +264,11 @@
           </div>
 
           <div id="recipes-grid" class="grid grid-cols-4 gap-5">
-            <!-- Recipes will be loaded here by JavaScript -->
-            <div
-              class="recipe-card bg-white rounded-xl overflow-hidden shadow-sm hover:shadow-lg transition-all cursor-pointer group"
-              data-meal-id="52772"
-            >
-              <div class="relative h-48 overflow-hidden">
-                <img
-                  class="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500"
-                  src="https://www.themealdb.com/images/media/meals/ustsqw1468250014.jpg"
-                  alt="Teriyaki Chicken Casserole"
-                  loading="lazy"
-                />
-                <div class="absolute bottom-3 left-3 flex gap-2">
-                  <span
-                    class="px-2 py-1 bg-white/90 backdrop-blur-sm text-xs font-semibold rounded-full text-gray-700"
-                  >
-                    Chicken
-                  </span>
-                  <span
-                    class="px-2 py-1 bg-emerald-500 text-xs font-semibold rounded-full text-white"
-                  >
-                    Japanese
-                  </span>
-                </div>
-              </div>
-              <div class="p-4">
-                <h3
-                  class="text-base font-bold text-gray-900 mb-1 group-hover:text-emerald-600 transition-colors line-clamp-1"
-                >
-                  Teriyaki Chicken Casserole
-                </h3>
-                <p class="text-xs text-gray-600 mb-3 line-clamp-2">
-                  Delicious recipe to try!
-                </p>
-                <div class="flex items-center justify-between text-xs">
-                  <span class="font-semibold text-gray-900">
-                    <i class="fa-solid fa-utensils text-emerald-600 mr-1"></i>
-                    Chicken
-                  </span>
-                  <span class="font-semibold text-gray-500">
-                    <i class="fa-solid fa-globe text-blue-500 mr-1"></i>
-                    Japanese
-                  </span>
-                </div>
-              </div>
-            </div>
           </div>
         </div>
       </section>
 
-      <section id="meal-details" class="px-8 py-8 bg-gray-50">
+      <section id="meal-details" class="px-8 py-8 bg-gray-50 hidden">
         <div class="max-w-7xl mx-auto">
           <!-- Back Button -->
           <button
@@ -620,7 +573,14 @@
                     src="https://www.youtube.com/embed/4aZr5hZXP_s"
                     class="absolute inset-0 w-full h-full"
                     frameborder="0"
-                    allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+                    allow="
+                      accelerometer;
+                      autoplay;
+                      clipboard-write;
+                      encrypted-media;
+                      gyroscope;
+                      picture-in-picture;
+                    "
                     allowfullscreen
                   >
                   </iframe>
@@ -752,7 +712,10 @@
       </section>
 
       <!-- ============= PRODUCT SCANNER SECTION ============= -->
-      <section id="products-section" class="px-8 py-8 bg-gray-50 min-h-screen">
+      <section
+        id="products-section"
+        class="px-8 py-8 bg-gray-50 min-h-screen hidden"
+      >
         <div class="max-w-7xl mx-auto">
           <!-- Search Header -->
           <div
@@ -988,7 +951,10 @@
       </section>
 
       <!-- ============= FOOD LOG SECTION ============= -->
-      <section id="foodlog-section" class="px-8 py-8 bg-gray-50 min-h-screen">
+      <section
+        id="foodlog-section"
+        class="px-8 py-8 bg-gray-50 min-h-screen hidden"
+      >
         <div class="max-w-7xl mx-auto">
           <!-- Page Header -->
           <div
