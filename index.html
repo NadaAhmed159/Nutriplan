@@ -164,7 +164,7 @@
 
       <section
         id="search-filters-section"
-        class="px-8 py-6 bg-white border-b border-gray-200"
+        class="px-8 py-6 bg-white border-b border-gray-200 hidden"
       >
         <div class="mx-auto">
           <div class="mb-6">
@@ -195,7 +195,7 @@
         </div>
       </section>
 
-      <section id="meal-categories-section" class="px-8 py-6 bg-white">
+      <section id="meal-categories-section" class="px-8 py-6 bg-white hidden">
         <div>
           <div class="flex items-center justify-between mb-4">
             <div>
@@ -234,7 +234,7 @@
         </div>
       </section>
 
-      <section id="all-recipes-section" class="px-8 py-8 bg-gray-50">
+      <section id="all-recipes-section" class="px-8 py-8 bg-gray-50 hidden">
         <div>
           <div class="flex items-center justify-between mb-6">
             <div>
@@ -319,7 +319,7 @@
                   </span>
                   <span class="flex items-center gap-2">
                     <i class="fa-solid fa-fire"></i>
-                    <span id="hero-calories">485 cal/serving</span>
+                    <span id="hero-calories">Calculating...</span>
                   </span>
                 </div>
               </div>
@@ -679,29 +679,35 @@
                         style="width: 24%"
                       ></div>
                     </div>
+                    <div class="flex items-center justify-between">
+                      <div class="flex items-center gap-2">
+                        <div class="w-3 h-3 rounded-full bg-red-500"></div>
+                        <span class="text-gray-700">Saturated Fat</span>
+                      </div>
+                      <span class="font-bold text-gray-900">1g</span>
+                    </div>
+                    <div class="w-full bg-gray-100 rounded-full h-2">
+                      <div
+                        class="bg-red-500 h-2 rounded-full"
+                        style="width: 24%"
+                      ></div>
+                    </div>
                   </div>
 
-                  <div class="mt-6 pt-6 border-t border-gray-100">
+                    <div class="mt-6 pt-6 border-t border-gray-100">
                     <h3 class="text-sm font-semibold text-gray-900 mb-3">
-                      Vitamins & Minerals (% Daily Value)
+                      Other
                     </h3>
                     <div class="grid grid-cols-2 gap-3 text-sm">
                       <div class="flex justify-between">
-                        <span class="text-gray-600">Vitamin A</span>
-                        <span class="font-medium">15%</span>
+                        <span class="text-gray-600">Cholesterol</span>
+                        <span class="font-medium">592mg</span>
                       </div>
                       <div class="flex justify-between">
-                        <span class="text-gray-600">Vitamin C</span>
-                        <span class="font-medium">25%</span>
+                        <span class="text-gray-600">Sodium</span>
+                        <span class="font-medium">1064mg</span>
                       </div>
-                      <div class="flex justify-between">
-                        <span class="text-gray-600">Calcium</span>
-                        <span class="font-medium">4%</span>
-                      </div>
-                      <div class="flex justify-between">
-                        <span class="text-gray-600">Iron</span>
-                        <span class="font-medium">12%</span>
-                      </div>
+                      
                     </div>
                   </div>
                 </div>
@@ -714,7 +720,7 @@
       <!-- ============= PRODUCT SCANNER SECTION ============= -->
       <section
         id="products-section"
-        class="px-8 py-8 bg-gray-50 min-h-screen hidden"
+        class="px-8 py-8 bg-gray-50 min-h-screen "
       >
         <div class="max-w-7xl mx-auto">
           <!-- Search Header -->

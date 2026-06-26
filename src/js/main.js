@@ -1,4 +1,9 @@
 const baseURL = "https://nutriplan-api.vercel.app/api";
+let serchSection = document.getElementById("search-filters-section");
+let mealCategoriesSection = document.getElementById("meal-categories-section");
+let allRecipesSection = document.getElementById("all-recipes-section");
+let mealDetailsSection = document.getElementById("meal-details");
+
 let loadingOverlay = document.getElementById("app-loading-overlay");
 let currentBtnArea = document.getElementById("allRecipesBtn");
 let currentBtnCategory = document.getElementById("all-types-div");
@@ -256,18 +261,12 @@ async function toggleCategory(e) {
 
 async function getMeals(ingredient, category = cat, cusine = chosenArea) {
   let res;
-  if (ingredient || cusine || (category && category !== "All")) {
+  if (ingredient || cusine || (category && category !== "All"))
     res = await fetch(
       `${baseURL}/meals/filter?ingredient=${ingredient ? ingredient : ""}&limit=25&category=${category !== undefined && category !== "All" ? category : ""}&area=${cusine ? cusine : ""}`,
     );
-    console.log(
-      `${baseURL}/meals/filter?ingredient=${ingredient ? ingredient : ""}&limit=25&category=${category !== undefined && category !== "All" ? category : ""}&area=${cusine ? cusine : ""}`,
-    );
-  } else {
-    res = await fetch(`${baseURL}/meals/random?count=25`);
-    console.log(`${baseURL}/meals/random?count=25`);
-  }
-  console.log(ingredient, category, cusine);
+  else res = await fetch(`${baseURL}/meals/random?count=25`);
+
   const data = await res.json();
   meals = data.results;
   displayMeals();
@@ -355,9 +354,374 @@ function displayMeals() {
     container.append(recipesName, p, div);
     recipeCard.append(imgContainer, container);
 
-    //apply event listener to meal details
+    recipeCard.addEventListener("click", async function (e) {
+      loadingOverlay.classList.remove("loading");
+      await getMealDetails(e);
+      loadingOverlay.classList.add("loading");
+    });
     recipesGrid.append(recipeCard);
   }
+}
+async function getMealMacros(meal) {
+  let ingredients = [];
+  for (let i = 0; i < meal.ingredients.length; i++) {
+    ingredients[i] =
+      meal.ingredients[i].measure + " " + meal.ingredients[i].ingredient;
+  }
+
+  const postObject = {
+    recipeName: meal.name,
+    ingredients: ingredients,
+  };
+  const res = await fetch(`${baseURL}/nutrition/analyze`, {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+      "x-api-key": "qeJZp5VC0A2gkO1Ebnl4mwBCgopccI5R4TIdUBY5",
+    },
+    body: JSON.stringify(postObject),
+  });
+  const data = await res.json();
+  return data.data;
+}
+
+async function getMealDetails(e) {
+
+  const mealId = e.currentTarget.getAttribute("data-meal-id");
+  const res = await fetch(`${baseURL}/meals/${mealId}`);
+  const data = await res.json();
+  const meal = data.result;
+  const nut = await getMealMacros(meal);
+  const mealMacros = {
+    protein: nut.perServing.protein,
+    carbs: nut.perServing.carbs,
+    fat: nut.perServing.fat,
+    fiber: nut.perServing.fiber,
+    sugar: nut.perServing.sugar,
+    saturatedFat: nut.perServing.saturatedFat,
+  };
+
+  const percentageMacros = calcMacrosPercentage(mealMacros);
+  serchSection.classList.add("hidden");
+  mealCategoriesSection.classList.add("hidden");
+  allRecipesSection.classList.add("hidden");
+  mealDetailsSection.classList.remove("hidden");
+
+  mealDetailsSection.innerHTML = `
+        <div class="max-w-7xl mx-auto">
+          <button
+            id="back-to-meals-btn"
+            class="flex items-center gap-2 text-gray-600 hover:text-emerald-600 font-medium mb-6 transition-colors"
+          >
+            <i class="fa-solid fa-arrow-left"></i>
+            <span>Back to Recipes</span>
+          </button>
+
+          <div class="bg-white rounded-2xl shadow-lg overflow-hidden mb-8">
+            <div class="relative h-80 md:h-96">
+              <img
+                src="${meal.thumbnail}"
+                alt="${meal.name}"
+                class="w-full h-full object-cover"
+              />
+              <div
+                class="absolute inset-0 bg-gradient-to-t from-black/70 via-black/20 to-transparent"
+              ></div>
+              <div class="absolute bottom-0 left-0 right-0 p-8">
+                <div class="flex items-center gap-3 mb-3">
+                  <span
+                    class="px-3 py-1 bg-emerald-500 text-white text-sm font-semibold rounded-full"
+                    >${meal.category}</span
+                  >
+                  <span
+                    class="px-3 py-1 bg-blue-500 text-white text-sm font-semibold rounded-full"
+                    >${meal.area ? meal.area : "International"}</span
+                  >
+                  ${
+                    meal.tags
+                      ? meal.tags.map(
+                          (tag) =>
+                            `<span class="px-3 py-1 bg-purple-500 text-white text-sm font-semibold rounded-full">${tag}</span>`,
+                        )
+                      : ""
+                  }
+                </div>
+                <h1 class="text-3xl md:text-4xl font-bold text-white mb-2">
+                  ${meal.name}
+                </h1>
+                <div class="flex items-center gap-6 text-white/90">
+                  <span class="flex items-center gap-2">
+                    <i class="fa-solid fa-clock"></i>
+                    <span>30 min</span>
+                  </span>
+                  <span class="flex items-center gap-2">
+                    <i class="fa-solid fa-utensils"></i>
+                    <span id="hero-servings">4 servings</span>
+                  </span>
+                  <span class="flex items-center gap-2">
+                    <i class="fa-solid fa-fire"></i>
+                    <span id="hero-calories">${nut.perServing.calories} cal/serving</span>
+                  </span>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div class="flex flex-wrap gap-3 mb-8">
+            <button
+              id="log-meal-btn"
+              class="flex items-center gap-2 px-6 py-3 bg-blue-600 text-white rounded-xl font-semibold hover:bg-blue-700 transition-all"
+              data-meal-id="${meal.id}"
+            >
+              <i class="fa-solid fa-clipboard-list"></i>
+              <span>Log This Meal</span>
+            </button>
+          </div>
+
+          <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
+            <!-- Left Column - Ingredients & Instructions -->
+            <div class="lg:col-span-2 space-y-8">
+              <div class="bg-white rounded-2xl shadow-lg p-6">
+                <h2
+                  class="text-xl font-bold text-gray-900 mb-4 flex items-center gap-2"
+                >
+                  <i class="fa-solid fa-list-check text-emerald-600"></i>
+                  Ingredients
+                  <span class="text-sm font-normal text-gray-500 ml-auto"
+                    >${meal.ingredients.length} items</span
+                  >
+                </h2>
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-3">
+                ${meal.ingredients
+                  .map(
+                    (ing) => `
+                  <div
+                    class="flex items-center gap-3 p-3 bg-gray-50 rounded-xl hover:bg-emerald-50 transition-colors"
+                  >
+                    <input
+                      type="checkbox"
+                      class="ingredient-checkbox w-5 h-5 text-emerald-600 rounded border-gray-300"
+                    />
+                    <span class="text-gray-700">
+                      <span class="font-medium text-gray-900">${ing.measure}</span>
+                      ${ing.ingredient}
+                    </span>
+                  </div>                    
+                    `,
+                  )
+                  .join("")}
+                  
+                </div>
+              </div>
+
+              <div class="bg-white rounded-2xl shadow-lg p-6">
+                <h2
+                  class="text-xl font-bold text-gray-900 mb-4 flex items-center gap-2"
+                >
+                  <i class="fa-solid fa-shoe-prints text-emerald-600"></i>
+                  Instructions
+                </h2>
+                <div class="space-y-4">
+                ${meal.instructions
+                  .map(
+                    (ins, index) => `
+                    <div
+                    class="flex gap-4 p-4 rounded-xl hover:bg-gray-50 transition-colors"
+                  >
+                    <div
+                      class="w-10 h-10 rounded-full bg-emerald-600 text-white flex items-center justify-center font-bold shrink-0"
+                    >
+                      ${index + 1}
+                    </div>
+                    <p class="text-gray-700 leading-relaxed pt-2">
+                      ${ins}
+                    </p>
+                  </div>`,
+                  )
+                  .join("")}
+                  
+                </div>
+              </div>
+
+              <div class="bg-white rounded-2xl shadow-lg p-6">
+                <h2
+                  class="text-xl font-bold text-gray-900 mb-4 flex items-center gap-2"
+                >
+                  <i class="fa-solid fa-video text-red-500"></i>
+                  Video Tutorial
+                </h2>
+                <div
+                  class="relative aspect-video rounded-xl overflow-hidden bg-gray-100"
+                >
+                  <iframe
+                    src="https://www.youtube.com/embed/${extractYoutupeId(meal.youtube)}"
+                    class="absolute inset-0 w-full h-full"
+                    frameborder="0"
+                    allow="
+                      accelerometer;
+                      autoplay;
+                      clipboard-write;
+                      encrypted-media;
+                      gyroscope;
+                      picture-in-picture;
+                    "
+                    allowfullscreen
+                  >
+                  </iframe>
+                </div>
+              </div>
+            </div>
+            <div class="space-y-6">
+              <div class="bg-white rounded-2xl shadow-lg p-6 sticky top-24">
+                <h2
+                  class="text-xl font-bold text-gray-900 mb-4 flex items-center gap-2"
+                >
+                  <i class="fa-solid fa-chart-pie text-emerald-600"></i>
+                  Nutrition Facts
+                </h2>
+                <div id="nutrition-facts-container">
+                  <p class="text-sm text-gray-500 mb-4">Per serving</p>
+
+                  <div
+                    class="text-center py-4 mb-4 bg-linear-to-br from-emerald-50 to-teal-50 rounded-xl"
+                  >
+                    <p class="text-sm text-gray-600">Calories per serving</p>
+                    <p class="text-4xl font-bold text-emerald-600">${nut.perServing.calories}</p>
+                    <p class="text-xs text-gray-500 mt-1">Total: ${nut.totals.calories} cal</p>
+                  </div>
+
+                  <div class="space-y-4">
+                    <div class="flex items-center justify-between">
+                      <div class="flex items-center gap-2">
+                        <div class="w-3 h-3 rounded-full bg-emerald-500"></div>
+                        <span class="text-gray-700">Protein</span>
+                      </div>
+                      <span class="font-bold text-gray-900">${nut.perServing.protein}</span>
+                    </div>
+                    <div class="w-full bg-gray-100 rounded-full h-2">
+                      <div
+                        class="bg-emerald-500 h-2 rounded-full"
+                        style="width:${percentageMacros.proteinP > 100 ? 100 : percentageMacros.proteinP}%"
+                      ></div>
+                    </div>
+
+                    <div class="flex items-center justify-between">
+                      <div class="flex items-center gap-2">
+                        <div class="w-3 h-3 rounded-full bg-blue-500"></div>
+                        <span class="text-gray-700">Carbs</span>
+                      </div>
+                      <span class="font-bold text-gray-900">${nut.perServing.carbs}g</span>
+                    </div>
+                    <div class="w-full bg-gray-100 rounded-full h-2">
+                      <div
+                        class="bg-blue-500 h-2 rounded-full"
+                        style="width: ${percentageMacros.carbsP > 100 ? 100 : percentageMacros.carbsP}%"
+                      ></div>
+                    </div>
+
+                    <div class="flex items-center justify-between">
+                      <div class="flex items-center gap-2">
+                        <div class="w-3 h-3 rounded-full bg-purple-500"></div>
+                        <span class="text-gray-700">Fat</span>
+                      </div>
+                      <span class="font-bold text-gray-900">${nut.perServing.fat}g</span>
+                    </div>
+                    <div class="w-full bg-gray-100 rounded-full h-2">
+                      <div
+                        class="bg-purple-500 h-2 rounded-full"
+                        style="width: ${percentageMacros.fatP > 100 ? 100 : percentageMacros.fatP}%"
+                      ></div>
+                    </div>
+                    <div class="flex items-center justify-between">
+                      <div class="flex items-center gap-2">
+                        <div class="w-3 h-3 rounded-full bg-orange-500"></div>
+                        <span class="text-gray-700">Fiber</span>
+                      </div>
+                      <span class="font-bold text-gray-900">${nut.perServing.fiber}g</span>
+                    </div>
+                    <div class="w-full bg-gray-100 rounded-full h-2">
+                      <div
+                        class="bg-orange-500 h-2 rounded-full"
+                        style="width: ${percentageMacros.fiberP > 100 ? 100 : percentageMacros.fiberP}%"
+                      ></div>
+                    </div>
+                    <div class="flex items-center justify-between">
+                      <div class="flex items-center gap-2">
+                        <div class="w-3 h-3 rounded-full bg-pink-500"></div>
+                        <span class="text-gray-700">Sugar</span>
+                      </div>
+                      <span class="font-bold text-gray-900">${nut.perServing.sugar}g</span>
+                    </div>
+                    <div class="w-full bg-gray-100 rounded-full h-2">
+                      <div
+                        class="bg-pink-500 h-2 rounded-full"
+                        style="width: ${percentageMacros.sugarP > 100 ? 100 : percentageMacros.sugarP}%"
+                      ></div>
+                    </div>
+                    <div class="flex items-center justify-between">
+                      <div class="flex items-center gap-2">
+                        <div class="w-3 h-3 rounded-full bg-red-500"></div>
+                        <span class="text-gray-700">Saturated Fat</span>
+                      </div>
+                      <span class="font-bold text-gray-900">${nut.perServing.saturatedFat}g</span>
+                    </div>
+                    <div class="w-full bg-gray-100 rounded-full h-2">
+                      <div
+                        class="bg-red-500 h-2 rounded-full"
+                        style="width: ${percentageMacros.saturatedFatP > 100 ? 100 : percentageMacros.saturatedFatP}%"
+                      ></div>
+                    </div>
+                  </div>
+                  <div class="mt-6 pt-6 border-t border-gray-100">
+                    <h3 class="text-sm font-semibold text-gray-900 mb-3">
+                      Other
+                    </h3>
+                    <div class="grid grid-cols-2 gap-3 text-sm">
+                      <div class="flex justify-between">
+                        <span class="text-gray-600">Cholesterol</span>
+                        <span class="font-medium">${nut.perServing.cholesterol}mg</span>
+                      </div>
+                      <div class="flex justify-between">
+                        <span class="text-gray-600">Sodium</span>
+                        <span class="font-medium">${nut.perServing.sodium}mg</span>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+  `;
+
+  const backToMealsBtn = document.getElementById("back-to-meals-btn");
+  backToMealsBtn.addEventListener("click", function () {
+    serchSection.classList.remove("hidden");
+    mealCategoriesSection.classList.remove("hidden");
+    allRecipesSection.classList.remove("hidden");
+    mealDetailsSection.classList.add("hidden");
+  });
+}
+
+function extractYoutupeId(url) {
+  return url.split("v=")[1];
+}
+function calcMacrosPercentage(macro) {
+  const protein = 50;
+  const carbs = 250;
+  const fat = 65;
+  const fiber = 25;
+  const sugar = 50;
+  const saturatedFat = 20;
+  const percentageMacro = {
+    proteinP: (macro.protein / protein) * 100,
+    carbsP: (macro.carbs / carbs) * 100,
+    fatP: (macro.fat / fat) * 100,
+    fiberP: (macro.fiber / fiber) * 100,
+    sugarP: (macro.sugar / sugar) * 100,
+    saturatedFatP: (macro.saturatedFat / saturatedFat) * 100,
+  };
+  return percentageMacro;
 }
 (async function () {
   loadingOverlay.classList.remove("loading");
