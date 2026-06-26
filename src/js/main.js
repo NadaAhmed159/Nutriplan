@@ -1,9 +1,13 @@
 const baseURL = "https://nutriplan-api.vercel.app/api";
+let loadingOverlay = document.getElementById("app-loading-overlay");
 let currentBtnArea = document.getElementById("allRecipesBtn");
-currentBtnArea.addEventListener("click", toggelAreaBtn);
-
 let currentBtnCategory = document.getElementById("all-types-div");
-currentBtnCategory.addEventListener("click", toggleCategory);
+
+currentBtnArea.addEventListener("click", await toggelAreaBtn);
+currentBtnCategory.addEventListener("click", await toggleCategory);
+
+let chosenArea = currentBtnArea.getAttribute("data-value");
+let cat = currentBtnCategory.getAttribute("data-category");
 
 let toggleView = [...document.getElementById("view-toggle").children];
 let currentDisplayView = document.getElementById("grid-view-btn");
@@ -122,13 +126,12 @@ async function getAllAreas() {
       "px-4 py-2 bg-gray-100 text-gray-700 rounded-full font-medium text-sm whitespace-nowrap hover:bg-gray-200 transition-all areaBtn";
     areaBtn.textContent = areas[i].name;
     areaBtn.setAttribute("data-value", areas[i].name);
-    areaBtn.addEventListener("click", toggelAreaBtn);
+    areaBtn.addEventListener("click", await toggelAreaBtn);
     cuisineGrid.append(areaBtn);
   }
 }
 
-function toggelAreaBtn(e) {
-  const chosenArea = e.target.getAttribute("data-value");
+async function toggelAreaBtn(e) {
   currentBtnArea.classList.remove(
     "bg-emerald-600",
     "text-white",
@@ -150,6 +153,27 @@ function toggelAreaBtn(e) {
     "text-gray-700",
     "hover:bg-gray-200",
   );
+  chosenArea = currentBtnArea.getAttribute("data-value");
+
+  cat = currentBtnCategory.getAttribute("data-category");
+
+  currentBtnCategory.classList.remove(
+    ...categoryStyles[cat].activeStyle.split(" "),
+  );
+  currentBtnCategory.classList.add(...categoryStyles[cat].style.split(" "));
+
+  currentBtnCategory = document.getElementById("all-types-div");
+
+  cat = currentBtnCategory.getAttribute("data-category");
+
+  currentBtnCategory.classList.add(
+    ...categoryStyles[cat].activeStyle.split(" "),
+  );
+  currentBtnCategory.classList.remove(...categoryStyles[cat].style.split(" "));
+
+  loadingOverlay.classList.remove("loading");
+  await getMeals();
+  loadingOverlay.classList.add("loading");
 }
 
 async function getAllCategories() {
@@ -182,12 +206,12 @@ async function getAllCategories() {
     inner.append(iconHolder, div);
     categoryCard.append(inner);
 
-    categoryCard.addEventListener("click", toggleCategory);
+    categoryCard.addEventListener("click", await toggleCategory);
     categoryGrid.append(categoryCard);
   }
 }
-function toggleCategory(e) {
-  let cat = currentBtnCategory.getAttribute("data-category");
+async function toggleCategory(e) {
+  cat = currentBtnCategory.getAttribute("data-category");
 
   currentBtnCategory.classList.remove(
     ...categoryStyles[cat].activeStyle.split(" "),
@@ -201,27 +225,72 @@ function toggleCategory(e) {
     ...categoryStyles[cat].activeStyle.split(" "),
   );
   currentBtnCategory.classList.remove(...categoryStyles[cat].style.split(" "));
+
+  currentBtnArea.classList.remove(
+    "bg-emerald-600",
+    "text-white",
+    "hover:bg-emerald-700",
+  );
+  currentBtnArea.classList.add(
+    "bg-gray-100",
+    "text-gray-700",
+    "hover:bg-gray-200",
+  );
+  currentBtnArea = document.getElementById("allRecipesBtn");
+  currentBtnArea.classList.add(
+    "bg-emerald-600",
+    "text-white",
+    "hover:bg-emerald-700",
+  );
+  currentBtnArea.classList.remove(
+    "bg-gray-100",
+    "text-gray-700",
+    "hover:bg-gray-200",
+  );
+
+  chosenArea = "";
+  loadingOverlay.classList.remove("loading");
+  await getMeals();
+  loadingOverlay.classList.add("loading");
 }
 
-async function getMeals(ingredient, category, cusine) {
+async function getMeals(ingredient, category = cat, cusine = chosenArea) {
   let res;
-  if (ingredient || category || cusine)
+  if (ingredient || cusine || (category && category !== "All")) {
     res = await fetch(
-      `${baseURL}/meals/filter?ingredient=${ingredient ? ingredient : ""}&limit=25&category=${category ? category : ""}&area=${cusine ? cusine : ""}`,
+      `${baseURL}/meals/filter?ingredient=${ingredient ? ingredient : ""}&limit=25&category=${category !== undefined && category !== "All" ? category : ""}&area=${cusine ? cusine : ""}`,
     );
-  else res = await fetch(`${baseURL}/meals/random?count=25`);
-
+    console.log(
+      `${baseURL}/meals/filter?ingredient=${ingredient ? ingredient : ""}&limit=25&category=${category !== undefined && category !== "All" ? category : ""}&area=${cusine ? cusine : ""}`,
+    );
+  } else {
+    res = await fetch(`${baseURL}/meals/random?count=25`);
+    console.log(`${baseURL}/meals/random?count=25`);
+  }
+  console.log(ingredient, category, cusine);
   const data = await res.json();
   meals = data.results;
   displayMeals();
 }
 
 function displayMeals() {
-  const view = currentDisplayView.getAttribute("title");
-  const recipesCount = document.getElementById("recipes-count");
   const recipesGrid = document.getElementById("recipes-grid");
+  const recipesCount = document.getElementById("recipes-count");
   recipesGrid.innerHTML = "";
-  recipesCount.textContent = `Showing ${meals.length} recipes`;
+  recipesCount.textContent = `Showing ${meals.length} ${chosenArea !== "" ? chosenArea : ""}${cat && cat !== "All" ? cat : ""} recipes`;
+  if (meals.length === 0) {
+    recipesGrid.innerHTML = `
+<div class="flex flex-col items-center justify-center py-12 text-center">
+    <div class="w-16 h-16 bg-gray-100 rounded-full flex items-center justify-center mb-4">
+        <i class="fa-solid fa-search text-gray-400 text-2xl"></i>
+    </div>
+    <p class="text-gray-500 text-lg">No recipes found</p>
+    <p class="text-gray-400 text-sm mt-2">Try searching for something else</p>
+</div>
+        `;
+    recipesGrid.className = "grid grid-cols-1 gap-5";
+  }
+  const view = currentDisplayView.getAttribute("title");
   for (let i = 0; i < meals.length; i++) {
     const recipeCard = document.createElement("div");
     if (view === "Grid View") {
@@ -238,8 +307,6 @@ function displayMeals() {
 
     const imgContainer = document.createElement("div");
     imgContainer.className = `relative overflow-hidden ${view === "Grid View" ? "h-48" : "w-48 h-full"}`;
-    console.log(view);
-
     const image = document.createElement("img");
     image.className =
       "w-full h-full object-cover group-hover:scale-110 transition-transform duration-500";
@@ -293,9 +360,11 @@ function displayMeals() {
   }
 }
 (async function () {
+  loadingOverlay.classList.remove("loading");
   await getAllAreas();
   await getAllCategories();
   await getMeals();
+  loadingOverlay.classList.add("loading");
 })();
 toggleView.forEach((element) => {
   element.addEventListener("click", function (e) {
