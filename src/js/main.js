@@ -5,6 +5,7 @@ let currentNav = document.getElementById("Meals-Recipes");
 let currentSection = document.getElementById("Meals");
 let mainSection = document.getElementById("Meals");
 //&&&&&&&&&&&&&&&&&&&& Meals & Recipes global variables
+const searchInput = document.getElementById("search-input");
 let serchSection = document.getElementById("search-filters-section");
 let mealCategoriesSection = document.getElementById("meal-categories-section");
 let allRecipesSection = document.getElementById("all-recipes-section");
@@ -115,14 +116,12 @@ const categoryStyles = {
     iconStyle: "from-emerald-400 to-green-500",
   },
 };
-
 let areas = [];
 let categories = [];
 let meals = [];
 
 //&&&&&&&&&&&&&&&&&&&& Meal details variables
 let mealDetailsSection = document.getElementById("meal-details");
-const backToMealsBtn = document.getElementById("back-to-meals-btn");
 const modal = document.getElementById("log-Modal");
 const modalIncrement = document.getElementById("increment-modal");
 const modalDecrement = document.getElementById("decrement-modal");
@@ -130,8 +129,103 @@ const logMealBtn = document.getElementById("log-meal-btn");
 const currentServing = document.getElementById("current-serving");
 
 //&&&&&&&&&&&&&&&&&&&& Food scan variables
-let productsScanSectionSection = document.getElementById("products-section");
+const addProductLogModal = document.getElementById("add-product-log");
+const cancelProductModal = document.getElementById("cancel-product-log");
+const productModal = document.getElementById("product-modal");
 
+let productsScanSection = document.getElementById("products-section");
+const productSearchInput = document.getElementById("product-search-input");
+const productSearchBtn = document.getElementById("search-product-btn");
+const productBarcodeInput = document.getElementById("barcode-input");
+const productBarcodeBtn = document.getElementById("lookup-barcode-btn");
+const productsGrid = document.getElementById("products-grid");
+const productCategories = document.getElementById("product-categories");
+
+const ProductCategoryStyles = {
+  "breakfast-cereals": {
+    style:
+      "from-emerald-50 to-teal-50 border-emerald-200 hover:border-emerald-400",
+    icon: "fa-solid fa-wheat-awn",
+  },
+  beverages: {
+    style: "from-red-50 to-rose-50 border-red-200 hover:border-red-400",
+    icon: "fa-solid fa-bottle-water",
+  },
+  snacks: {
+    style: "from-amber-50 to-orange-50 border-amber-200 hover:border-amber-400",
+    icon: "fa-solid fa-cookie",
+  },
+  dairies: {
+    style:
+      "from-orange-50 to-amber-50 border-orange-200 hover:border-orange-400",
+    icon: "fa-solid fa-cheese",
+  },
+  cheeses: {
+    style:
+      "from-emerald-50 to-green-50 border-emerald-200 hover:border-emerald-400",
+    icon: "fa-solid fa-cheese",
+  },
+  yogurts: {
+    style: "from-teal-50 to-cyan-50 border-teal-200 hover:border-teal-400",
+    icon: "fa-solid fa-jar",
+  },
+  chocolates: {
+    style:
+      "from-green-50 to-emerald-50 border-green-200 hover:border-green-400",
+    icon: "fa-solid fa-mug-hot",
+  },
+  biscuits: {
+    style: "from-cyan-50 to-blue-50 border-cyan-200 hover:border-cyan-400",
+    icon: "fa-solid fa-cookie-bite",
+  },
+  "ice-creams": {
+    style: "from-rose-50 to-red-50 border-rose-200 hover:border-rose-400",
+    icon: "fa-solid fa-ice-cream",
+  },
+  breads: {
+    style:
+      "from-yellow-50 to-amber-50 border-yellow-200 hover:border-yellow-400",
+    icon: "fa-solid fa-bread-slice",
+  },
+  fruits: {
+    style: "from-slate-50 to-gray-50 border-slate-200 hover:border-slate-400",
+    icon: "fa-solid fa-apple-whole",
+  },
+  vegetables: {
+    style:
+      "bg-gradient-to-r from-green-400 to-green-600 hover:from-green-500 hover:to-green-700",
+    icon: "fa-solid fa-carrot",
+  },
+};
+const nutriScoreFilter = document.querySelectorAll(".nutri-score-filter");
+let currentProducts = [];
+const nutriScoreColors = {
+  a: "bg-green-500",
+  b: "bg-lime-500",
+  c: "bg-yellow-500",
+  d: "bg-orange-500",
+  e: "bg-red-500",
+};
+const novaColors = {
+  1: "#22c55e",
+  2: "#84cc16",
+  3: "#fb923c",
+  4: "#ef4444",
+};
+
+const novaColorsLight = {
+  1: "#dcfce7",
+  2: "#ecfccb",
+  3: "#ffedd5",
+  4: "#fee2e2",
+};
+const nutriScoreColorsLight = {
+  a: "#dcfce7",
+  b: "#ecfccb",
+  c: "#fef9c3",
+  d: "#ffedd5",
+  e: "#fee2e2",
+};
 //&&&&&&&&&&&&&&&&&&&& Food Log variables
 let mealLogsSection = document.getElementById("foodlog-section");
 let caloriesSpan = document.getElementById("total-log-calaroies");
@@ -153,8 +247,17 @@ let logedStat = JSON.parse(localStorage.getItem("logedStat")) || {
   totalLogCarbsP: 0,
   totalLogFatP: 0,
 };
-
+const itemsOfWeek = document.getElementById("items-of-week");
+itemsOfWeek.innerText = logedItems.length + " items";
 //&&&&&&&&&&&&&&&&&&&& start functions
+
+async function searchMeal(term) {
+  const res = await fetch(`${baseURL}/meals/search?q=${term}&page=1&limit=25`);
+  const data = await res.json();
+  meals = data.results;
+  displayMeals(meals);
+  console.log(meals);
+}
 
 async function getAllAreas() {
   const cuisineGrid = document.getElementById("cuisine-grid");
@@ -307,7 +410,7 @@ async function getMeals(ingredient, category = cat, cusine = chosenArea) {
 }
 
 function displayMeals() {
-  // history.pushState(null, "home", "home");
+  history.pushState(null, "home", "home");
 
   const recipesGrid = document.getElementById("recipes-grid");
   const recipesCount = document.getElementById("recipes-count");
@@ -391,6 +494,18 @@ function displayMeals() {
     recipeCard.append(imgContainer, container);
 
     recipesGrid.append(recipeCard);
+    const productCards = document.querySelectorAll(".product-card");
+
+    productCards.forEach((element) => {
+      element.addEventListener("click", async function (e) {
+        console.log("logggg");
+
+        const product = await getProductByBarCode(
+          e.target.getAttribute("data-barcode"),
+        );
+        displayProductModal(product);
+      });
+    });
   }
 }
 
@@ -437,11 +552,11 @@ async function getMealDetails(e) {
   const percentageMacros = calcMacrosPercentage(mealMacros);
   mainSection.classList.add("hidden");
   mealDetailsSection.classList.remove("hidden");
-  // history.replaceState(
-  //   null,
-  //   null,
-  //   `meal/${meal.name.trim().toLowerCase().replace(/\s+/g, "-")}`,
-  // );
+  history.replaceState(
+    null,
+    null,
+    `meal/${meal.name.trim().toLowerCase().replace(/\s+/g, "-")}`,
+  );
 
   mealDetailsSection.innerHTML = `
         <div class="max-w-7xl mx-auto">
@@ -731,6 +846,14 @@ async function getMealDetails(e) {
           </div>
         </div>
   `;
+  const backToMealsBtn = document.getElementById("back-to-meals-btn");
+
+  backToMealsBtn.addEventListener("click", function () {
+     history.pushState(null, "home", "home");
+
+    mainSection.classList.remove("hidden");
+    mealDetailsSection.classList.add("hidden");
+  });
 
   const modalBtn = document.getElementById("modal-btn");
   let item = {
@@ -777,7 +900,6 @@ function displayModal(item) {
     });
   });
 }
-
 function extractYoutupeId(url) {
   return url.split("v=")[1];
 }
@@ -798,6 +920,241 @@ function calcMacrosPercentage(macro) {
   };
   return percentageMacro;
 }
+async function displayProductCategorys() {
+  const res = await fetch(`${baseURL}/products/categories`);
+  const data = await res.json();
+  const categories = data.results;
+  for (let i = 0; i < 10; i++) {
+    const btn = document.createElement("button");
+    btn.className = `product-category-btn px-4 py-2 bg-gradient-to-br border ${ProductCategoryStyles[categories[i].id].style} text-gray-700 rounded-lg text-sm font-medium whitespace-nowrap   transition-all`;
+    btn.setAttribute("target-category-id", categories[i].id);
+    const icon = document.createElement("i");
+    icon.className = `fa-solid ${ProductCategoryStyles[categories[i].id].icon}  mr-1.5`;
+    btn.append(icon, categories[i].name);
+    productCategories.append(btn);
+  }
+}
+async function getProductByBarCode(barcode) {
+  const res = await fetch(`${baseURL}/products/barcode/${barcode}`);
+  const data = await res.json();
+  currentProducts = [data.result];
+
+  return data.result;
+}
+async function getProductByName(productName) {
+  const res = await fetch(
+    `${baseURL}/products/search?q=${productName}&page=1&limit=24`,
+  );
+  const data = await res.json();
+  currentProducts = data.results;
+
+  return data.results;
+}
+async function getProductByCategory(categoryName) {
+  const res = await fetch(`${baseURL}/products/category/${categoryName}`);
+  const data = await res.json();
+  currentProducts = data.results;
+
+  return data.results;
+}
+function filterProductByNutritionGrade(grade) {
+  console.log(currentProducts, grade);
+  if (grade === "") {
+    displayProducts(currentProducts);
+    return;
+  }
+  const filteredProducts = [];
+  for (let i = 0; i < currentProducts.length; i++) {
+    if (currentProducts[i].nutritionGrade === grade) {
+      filteredProducts.push(currentProducts[i]);
+    }
+  }
+
+  displayProducts(filteredProducts);
+}
+function displayProducts(products) {
+  if (!(products.length > 0)) {
+    productsGrid.className = "grid grid-cols-1 ";
+
+    productsGrid.innerHTML = `
+<div class="flex flex-col items-center justify-center py-12 text-center">
+    <div class="w-16 h-16 bg-gray-100 rounded-full flex items-center justify-center mb-4">
+        <i class="fa-solid fa-box-open text-gray-400 text-2xl"></i>
+    </div>
+    <p class="text-gray-500 text-lg">No products to display</p>
+    <p class="text-gray-400 text-sm mt-2">Search for a product or browse by category</p>
+</div>
+    `;
+    return;
+  }
+  productsGrid.innerHTML = "";
+  for (let i = 0; i < products.length; i++) {
+    productsGrid.className =
+      "grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-5";
+
+    const card = document.createElement("div");
+    card.className =
+      "product-card bg-white rounded-xl overflow-hidden shadow-sm hover:shadow-lg transition-all cursor-pointer group";
+    card.setAttribute("data-barcode", products[i].barcode);
+
+    const imgContainer = document.createElement("div");
+    imgContainer.className =
+      "relative h-40 bg-gray-100 flex items-center justify-center overflow-hidden";
+
+    const img = document.createElement("img");
+    img.className =
+      "w-full h-full object-contain group-hover:scale-110 transition-transform duration-300";
+    img.src = products[i].image;
+    img.alt = products[i].name;
+    img.loading = "lazy";
+
+    const nutriBadge = document.createElement("div");
+    nutriBadge.className = `absolute top-2 left-2 ${nutriScoreColors[products[i].nutritionGrade] ?? "bg-gray-400"} text-white text-xs font-bold px-2 py-1 rounded uppercase`;
+    nutriBadge.textContent = `Nutri-Score ${products[i].nutritionGrade}`;
+
+    const novaBadge = document.createElement("div");
+    novaBadge.style.backgroundColor = novaColors[products[i].novaGroup];
+
+    novaBadge.className = `absolute top-2 right-2  text-white text-xs font-bold w-6 h-6 rounded-full flex items-center justify-center`;
+    novaBadge.title = `NOVA ${products[i].novaGroup}`;
+    novaBadge.textContent = products[i].novaGroup;
+
+    imgContainer.append(img, nutriBadge, novaBadge);
+
+    const body = document.createElement("div");
+    body.className = "p-4";
+
+    const brandEl = document.createElement("p");
+    brandEl.className = "text-xs text-emerald-600 font-semibold mb-1 truncate";
+    brandEl.textContent = products[i].brand;
+
+    const nameEl = document.createElement("h3");
+    nameEl.className =
+      "font-bold text-gray-900 mb-2 line-clamp-2 group-hover:text-emerald-600 transition-colors";
+    nameEl.textContent = products[i].name;
+
+    const meta = document.createElement("div");
+    meta.className = "flex items-center gap-3 text-xs text-gray-500 mb-3";
+    meta.innerHTML = `
+    <span><i class="fa-solid fa-fire mr-1"></i>${products[i].nutrients.calories.toFixed(1)} kcal/100g</span>
+  `;
+    const macros = document.createElement("div");
+    macros.className = "grid grid-cols-4 gap-1 text-center";
+    [
+      {
+        val: products[i].nutrients.protein.toFixed(1),
+        label: "Protein",
+        bg: "bg-emerald-50",
+        text: "text-emerald-700",
+      },
+      {
+        val: products[i].nutrients.carbs.toFixed(1),
+        label: "Carbs",
+        bg: "bg-blue-50",
+        text: "text-blue-700",
+      },
+      {
+        val: products[i].nutrients.fat.toFixed(1),
+        label: "Fat",
+        bg: "bg-purple-50",
+        text: "text-purple-700",
+      },
+      {
+        val: products[i].nutrients.sugar.toFixed(1),
+        label: "Sugar",
+        bg: "bg-orange-50",
+        text: "text-orange-700",
+      },
+    ].forEach(({ val, label, bg, text }) => {
+      const cell = document.createElement("div");
+      cell.className = `${bg} rounded p-1.5`;
+      const valEl = document.createElement("p");
+      valEl.className = `text-xs font-bold ${text}`;
+      valEl.textContent = val;
+      const labelEl = document.createElement("p");
+      labelEl.className = "text-[10px] text-gray-500";
+      labelEl.textContent = label;
+      cell.append(valEl, labelEl);
+      macros.append(cell);
+    });
+
+    body.append(brandEl, nameEl, meta, macros);
+    card.append(imgContainer, body);
+    productsGrid.append(card);
+  }
+}
+
+function displayProductModal(replace) {
+  const productModalImage = document.getElementById("product-modal-img");
+  const productModalBrand = document.getElementById("modal-brand");
+  const productModalName = document.getElementById("modal-name");
+  const productModalNutriGrade = document.getElementById("modal-nutri");
+  const productModalNovagroup = document.getElementById("modal-nova");
+
+  const productModalNutriGradeDiv = document.getElementById("nutriScoreDiv");
+  const productModalNovagroupDiv = document.getElementById("novaScoreDiv");
+  const productModalCalories = document.getElementById("modal-calories");
+  const productModalProtien = document.getElementById("modal-protein");
+  const productModalCarbs = document.getElementById("modal-carbs");
+  const productModalFat = document.getElementById("modal-fat");
+  const productModalSugar = document.getElementById("modal-sugar");
+  const productModalFiber = document.getElementById("modal-fiber");
+  const productModalSodium = document.getElementById("modal-sodium");
+  productModal.classList.remove("hidden");
+  productModalImage.setAttribute("src", replace.image);
+  productModalImage.setAttribute("alt", replace.name);
+  productModalBrand.innerText = replace.brand;
+  productModalName.innerText = replace.name;
+  productModalNutriGrade.innerText = replace.nutritionGrade;
+  productModalNutriGrade.classList.add(
+    nutriScoreColors[replace.nutritionGrade],
+  );
+  productModalNovagroup.innerText = replace.novaGroup;
+  productModalNovagroup.style.backgroundColor = novaColors[replace.novaGroup];
+  productModalNutriGradeDiv.style.backgroundColor =
+    nutriScoreColorsLight[replace.nutritionGrade];
+  productModalNovagroupDiv.style.backgroundColor =
+    novaColorsLight[replace.novaGroup];
+  if (replace.novaGroup === "unknown") {
+    productModalNovagroupDiv.classList.add("hidden");
+  }
+  productModalCalories.innerText = replace.nutrients.calories.toFixed(1);
+  productModalProtien.innerText = replace.nutrients.protein.toFixed(1);
+  productModalCarbs.innerText = replace.nutrients.carbs.toFixed(1);
+  productModalFat.innerText = replace.nutrients.fat.toFixed(1);
+  productModalSugar.innerText = replace.nutrients.sugar.toFixed(1);
+  productModalFiber.innerText = replace.nutrients.fiber.toFixed(1);
+  productModalSodium.innerText = replace.nutrients.sodium.toFixed(1);
+  replace.nutrients.saturatedFat = 0;
+  const percentageMacros = calcMacrosPercentage(replace.nutrients);
+
+  addProductLogModal.addEventListener("click", function () {
+    productModal.classList.add("hidden");
+
+    const item = {
+      itemName: replace.name,
+      itemThumbnail: replace.image,
+
+      mealMacros: replace.nutrients,
+      percentageMacros: percentageMacros,
+    };
+    item.quantity = 1;
+    item.loggedFrom = "Product";
+
+    logItem(item, new Date());
+    Swal.fire({
+      title: "Meal Logged!",
+      text: `${item.name}(${item.quantity}serving)has been added to you daily log.`,
+      html: `
+        <p class="text-emerald-600 font-medium">+${item.mealMacros.calories * item.quantity}calories</p>
+  `,
+      icon: "success",
+      showConfirmButton: false,
+      timer: 2000,
+    });
+  });
+}
+
 function logItem(item, date) {
   logedStat.totalLogCalaroies += item.mealMacros.calories * item.quantity;
   logedStat.totalLogProtien += item.mealMacros.protein * item.quantity;
@@ -810,6 +1167,8 @@ function logItem(item, date) {
   logedStat.totalLogFatP += item.percentageMacros.fat * item.quantity;
   item.date = date;
   logedItems.push(item);
+  itemsOfWeek.innerText = logedItems.length + " items";
+
   localStorage.setItem("logedItems", JSON.stringify(logedItems));
   localStorage.setItem("logedStat", JSON.stringify(logedStat));
   displayLogedItems();
@@ -842,12 +1201,12 @@ function displayLogedItems() {
                     </p>
                   </div>
                   <div class="flex gap-3 mt-2">
-                    <button
+                    <button id="browseToMeals"
                       class="flex items-center gap-2 bg-emerald-500 hover:bg-emerald-700 text-white text-sm font-semibold px-5 py-2.5 rounded-xl transition-colors"
                     >
                       <i class="fa-solid fa-plus"></i> Browse Recipes
                     </button>
-                    <button
+                    <button id="browseToscanProducts"
                       class="flex items-center gap-2 bg-blue-600 hover:bg-blue-700 text-white text-sm font-semibold px-5 py-2.5 rounded-xl transition-colors"
                     >
                       <i class="fa-solid fa-barcode"></i> Scan Product
@@ -856,6 +1215,46 @@ function displayLogedItems() {
                 </div>
 `;
     clearAllLogBtn.classList.add("hidden");
+
+    const browseToMeals = document.getElementById("browseToMeals");
+
+    browseToMeals.addEventListener("click", function () {
+     history.pushState(null, "home", "home");
+
+      currentNav.classList.add("text-gray-600", "hover:bg-gray-50");
+      currentNav.classList.remove("bg-emerald-50", "text-emerald-700");
+      currentNav.children[1].classList.remove("font-semibold");
+      currentNav.children[1].classList.add("font-medium");
+      currentSection.classList.add("hidden");
+
+      currentSection = document.getElementById("Meals");
+        currentNav=document.getElementById("Meals-Recipes")
+      currentNav.classList.add("bg-emerald-50", "text-emerald-700");
+      currentNav.classList.remove("text-gray-600", "hover:bg-gray-50");
+      currentNav.children[1].classList.add("font-semibold");
+      currentNav.children[1].classList.remove("font-medium");
+      currentSection.classList.remove("hidden");
+    });
+    const browseToscanProducts = document.getElementById(
+      "browseToscanProducts",
+    );
+    browseToscanProducts.addEventListener("click", function () {
+            history.replaceState(null, null, "products");
+
+      currentNav.classList.add("text-gray-600", "hover:bg-gray-50");
+      currentNav.classList.remove("bg-emerald-50", "text-emerald-700");
+      currentNav.children[1].classList.remove("font-semibold");
+      currentNav.children[1].classList.add("font-medium");
+      currentSection.classList.add("hidden");
+
+      currentSection = document.getElementById("products-section");
+        currentNav=document.getElementById("Product-Scanner")
+      currentNav.classList.add("bg-emerald-50", "text-emerald-700");
+      currentNav.classList.remove("text-gray-600", "hover:bg-gray-50");
+      currentNav.children[1].classList.add("font-semibold");
+      currentNav.children[1].classList.remove("font-medium");
+      currentSection.classList.remove("hidden");
+    });
 
     return;
   }
@@ -882,7 +1281,11 @@ function displayLogedItems() {
     const recipeLink = document.createElement("span");
     recipeLink.className =
       "text-emerald-500 font-medium cursor-pointer hover:underline";
-    recipeLink.textContent = "Recipe";
+    recipeLink.textContent = logedItems[i].loggedFrom;
+    recipeLink.classList.add(
+      `${logedItems[i].loggedFrom == "Recipe" ? "text-emerald-600" : "text-blue-600"}`,
+    );
+
     meta.append(`${logedItems[i].quantity} serving • `, recipeLink);
 
     const timeEl = document.createElement("p");
@@ -944,6 +1347,7 @@ function displayLogedItems() {
     });
   }
 }
+
 function deleteFromLogs(index) {
   logedStat.totalLogCalaroies -=
     logedItems[index].mealMacros.calories * logedItems[index].quantity;
@@ -1010,10 +1414,12 @@ await (async function () {
   await getAllCategories();
   await getMeals();
   loadingOverlay.classList.add("loading");
+  await displayProductCategorys();
 })();
 const recipeCards = document.querySelectorAll(".recipe-card");
 let areaBtns = document.querySelectorAll(".areaBtn");
 const categoryCards = document.querySelectorAll(".category-card");
+const productCategoryBtns = document.querySelectorAll(".product-category-btn");
 
 //&&&&&&&&&&&&&&&&&&&& start event listeners
 navLinks.forEach((element) => {
@@ -1033,14 +1439,18 @@ navLinks.forEach((element) => {
     currentNav.children[1].classList.remove("font-medium");
     currentSection.classList.remove("hidden");
     if (currentNav.getAttribute("page-target") === "foodlog-section") {
-      // history.replaceState(null, null, "foodlog");
+      history.replaceState(null, null, "foodlog");
       displayLogedItems();
     } else if (currentNav.getAttribute("page-target") === "products-section") {
-      // history.replaceState(null, null, "products");
+      history.replaceState(null, null, "products");
     }
-    // else history.pushState(null, "home", "home");
+    else history.pushState(null, "home", "home");
   });
 });
+searchInput.addEventListener("input", async function () {
+  await searchMeal(searchInput.value);
+});
+
 currentBtnArea.addEventListener("click", await toggelAreaBtn);
 currentBtnCategory.addEventListener("click", await toggleCategory);
 areaBtns.forEach((element) => {
@@ -1064,12 +1474,6 @@ toggleView.forEach((element) => {
     displayMeals();
   });
 });
-backToMealsBtn.addEventListener("click", function () {
-  mainSection.classList.remove("hidden");
-  mealDetailsSection.classList.add("hidden");
-  console.log(mainSection,mealDetailsSection);
-  
-});
 modalIncrement.addEventListener("click", function () {
   if (Number(currentServing.innerText) + 0.5 <= 10)
     currentServing.innerText = Number(currentServing.innerText) + 0.5;
@@ -1086,5 +1490,59 @@ document.addEventListener("click", function (e) {
   ) {
     modal.classList.add("hidden");
   }
+});
+document.addEventListener("click", function (e) {
+  if (
+    (!productModal.contains(e.target) &&
+      !e.target.closest("#add-product-log")) ||
+    e.target.closest("#cancel-product-log")
+  ) {
+    productModal.classList.add("hidden");
+  }
+});
+productSearchBtn.addEventListener("click", async function () {
+  productsGrid.className = "grid grid-cols-1";
+  productsGrid.innerHTML = `
+<div class="flex items-center justify-center py-12">
+    <div class="animate-spin rounded-full h-12 w-12 border-b-2 border-emerald-600"></div>
+</div>
+  `;
+  const products = await getProductByName(productSearchInput.value);
+  displayProducts(products);
+  productSearchInput.value = "";
+});
+productBarcodeBtn.addEventListener("click", async function () {
+  productsGrid.innerHTML = `
+<div class="flex items-center justify-center py-12">
+    <div class="animate-spin rounded-full h-12 w-12 border-b-2 border-emerald-600"></div>
+</div>
+  `;
+  productsGrid.className = "grid grid-cols-1";
+
+  const products = await getProductByBarCode(productBarcodeInput.value);
+  displayProducts([products]);
+  productBarcodeInput.value = "";
+});
+productCategoryBtns.forEach((element) => {
+  element.addEventListener("click", async function (e) {
+    productsGrid.innerHTML = `
+<div class="flex items-center justify-center py-12">
+    <div class="animate-spin rounded-full h-12 w-12 border-b-2 border-emerald-600"></div>
+</div>
+  `;
+    productsGrid.className = "grid grid-cols-1";
+
+    const products = await getProductByCategory(
+      e.target
+        .closest(".product-category-btn")
+        .getAttribute("target-category-id"),
+    );
+    displayProducts(products);
+  });
+});
+nutriScoreFilter.forEach((element) => {
+  element.addEventListener("click", function (e) {
+    filterProductByNutritionGrade(e.target.getAttribute("data-grade"));
+  });
 });
 clearAllLogBtn.addEventListener("click", clearAllLogs);

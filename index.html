@@ -837,33 +837,7 @@
             <div
               class="flex gap-3 overflow-x-auto pb-2"
               id="product-categories"
-            >
-              <button
-                class="product-category-btn px-4 py-2 bg-emerald-100 text-emerald-700 rounded-lg text-sm font-medium whitespace-nowrap hover:bg-emerald-200 transition-all"
-              >
-                <i class="fa-solid fa-cookie mr-1.5"></i>Snacks
-              </button>
-              <button
-                class="product-category-btn px-4 py-2 bg-blue-100 text-blue-700 rounded-lg text-sm font-medium whitespace-nowrap hover:bg-blue-200 transition-all"
-              >
-                <i class="fa-solid fa-glass-water mr-1.5"></i>Beverages
-              </button>
-              <button
-                class="product-category-btn px-4 py-2 bg-amber-100 text-amber-700 rounded-lg text-sm font-medium whitespace-nowrap hover:bg-amber-200 transition-all"
-              >
-                <i class="fa-solid fa-bread-slice mr-1.5"></i>Breakfast
-              </button>
-              <button
-                class="product-category-btn px-4 py-2 bg-purple-100 text-purple-700 rounded-lg text-sm font-medium whitespace-nowrap hover:bg-purple-200 transition-all"
-              >
-                <i class="fa-solid fa-ice-cream mr-1.5"></i>Desserts
-              </button>
-              <button
-                class="product-category-btn px-4 py-2 bg-rose-100 text-rose-700 rounded-lg text-sm font-medium whitespace-nowrap hover:bg-rose-200 transition-all"
-              >
-                <i class="fa-solid fa-cheese mr-1.5"></i>Dairy
-              </button>
-            </div>
+            ></div>
           </div>
 
           <!-- Products Grid -->
@@ -875,83 +849,19 @@
               </p>
             </div>
 
-            <div
-              id="products-grid"
-              class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-5"
-            >
+            <div id="products-grid" class="grid grid-cols-1">
               <div
-                class="product-card bg-white rounded-xl overflow-hidden shadow-sm hover:shadow-lg transition-all cursor-pointer group"
-                data-barcode="7613034626844"
+                class="flex flex-col items-center justify-center py-12 text-center"
               >
                 <div
-                  class="relative h-40 bg-gray-100 flex items-center justify-center overflow-hidden"
+                  class="w-16 h-16 bg-gray-100 rounded-full flex items-center justify-center mb-4"
                 >
-                  <img
-                    class="w-full h-full object-contain group-hover:scale-110 transition-transform duration-300"
-                    src="https://images.openfoodfacts.org/images/products/316/893/015/9742/front_fr.54.400.jpg"
-                    alt="Product Name"
-                    loading="lazy"
-                  />
-
-                  <!-- Nutri-Score Badge -->
-                  <div
-                    class="absolute top-2 left-2 bg-green-500 text-white text-xs font-bold px-2 py-1 rounded uppercase"
-                  >
-                    Nutri-Score A
-                  </div>
-
-                  <!-- NOVA Badge -->
-                  <div
-                    class="absolute top-2 right-2 bg-lime-500 text-white text-xs font-bold w-6 h-6 rounded-full flex items-center justify-center"
-                    title="NOVA 2"
-                  >
-                    2
-                  </div>
+                  <i class="fa-solid fa-box-open text-gray-400 text-2xl"></i>
                 </div>
-
-                <div class="p-4">
-                  <p
-                    class="text-xs text-emerald-600 font-semibold mb-1 truncate"
-                  >
-                    Brand Name
-                  </p>
-                  <h3
-                    class="font-bold text-gray-900 mb-2 line-clamp-2 group-hover:text-emerald-600 transition-colors"
-                  >
-                    Product Name
-                  </h3>
-
-                  <div
-                    class="flex items-center gap-3 text-xs text-gray-500 mb-3"
-                  >
-                    <span
-                      ><i class="fa-solid fa-weight-scale mr-1"></i>250g</span
-                    >
-                    <span
-                      ><i class="fa-solid fa-fire mr-1"></i>350 kcal/100g</span
-                    >
-                  </div>
-
-                  <!-- Mini Nutrition -->
-                  <div class="grid grid-cols-4 gap-1 text-center">
-                    <div class="bg-emerald-50 rounded p-1.5">
-                      <p class="text-xs font-bold text-emerald-700">8.5g</p>
-                      <p class="text-[10px] text-gray-500">Protein</p>
-                    </div>
-                    <div class="bg-blue-50 rounded p-1.5">
-                      <p class="text-xs font-bold text-blue-700">45.2g</p>
-                      <p class="text-[10px] text-gray-500">Carbs</p>
-                    </div>
-                    <div class="bg-purple-50 rounded p-1.5">
-                      <p class="text-xs font-bold text-purple-700">12.3g</p>
-                      <p class="text-[10px] text-gray-500">Fat</p>
-                    </div>
-                    <div class="bg-orange-50 rounded p-1.5">
-                      <p class="text-xs font-bold text-orange-700">18.5g</p>
-                      <p class="text-[10px] text-gray-500">Sugar</p>
-                    </div>
-                  </div>
-                </div>
+                <p class="text-gray-500 text-lg">No products to display</p>
+                <p class="text-gray-400 text-sm mt-2">
+                  Search for a product or browse by category
+                </p>
               </div>
             </div>
           </div>
@@ -1116,7 +1026,9 @@
           </div>
 
           <!-- Weekly Overview -->
-          <div class="bg-white rounded-2xl p-6 mb-6 border-2 border-gray-200">
+          <div
+            class="bg-white rounded-2xl p-6 mb-6 border-2 border-gray-200 hidden"
+          >
             <h3 class="text-lg font-bold text-gray-900 mb-4">
               <i class="fa-solid fa-calendar-week text-indigo-500 mr-2"></i>
               Weekly Overview
@@ -1160,7 +1072,7 @@
               </div>
               <div>
                 <p class="text-xs text-gray-400">Total Items This Week</p>
-                <p class="text-lg font-bold text-gray-900">1 items</p>
+                <p id="items-of-week" class="text-lg font-bold text-gray-900">1 items</p>
               </div>
             </button>
 
@@ -1182,8 +1094,7 @@
       </section>
     </div>
     <!-- Weekly Overview Section -->
-    <div class="bg-white rounded-2xl p-6 shadow-sm">
-
+    <div class="bg-white rounded-2xl p-6 shadow-sm hidden">
       <!-- Weekly Overview -->
       <div class="mt-4 hidden">
         <h2
@@ -1250,12 +1161,19 @@
       id="log-Modal"
       class="fixed inset-0 bg-black backdrop-blur-sm flex items-center justify-center z-50 hidden"
     >
-      <div class="bg-white  rounded-2xl shadow-xl w-full max-w-md mb-6 p-6">
+      <div class="bg-white rounded-2xl shadow-xl w-full max-w-md mb-6 p-6">
         <div class="flex items-center gap-3 mb-6">
-          <img id="modal-img" src="" alt="meal" class="w-16 h-16 rounded-xl object-cover" />
+          <img
+            id="modal-img"
+            src=""
+            alt="meal"
+            class="w-16 h-16 rounded-xl object-cover"
+          />
           <div>
             <h2 class="text-xl font-bold text-gray-900">Log This Meal</h2>
-            <p id="modal-meal-name" class="text-sm text-gray-500">Chicken Handi</p>
+            <p id="modal-meal-name" class="text-sm text-gray-500">
+              Chicken Handi
+            </p>
           </div>
         </div>
 
@@ -1263,17 +1181,20 @@
           Number of Servings
         </p>
         <div class="flex items-center gap-3 mb-6">
-          <button id="decrement-modal"
+          <button
+            id="decrement-modal"
             class="w-10 h-10 rounded-xl border border-gray-200 flex items-center justify-center text-gray-600 hover:bg-gray-50 transition-colors"
           >
             <i class="fa-solid fa-minus text-sm"></i>
           </button>
-          <div id="current-serving"
+          <div
+            id="current-serving"
             class="w-16 h-10 border border-gray-200 rounded-xl flex items-center justify-center font-bold text-gray-900"
           >
             1
           </div>
-          <button id="increment-modal"
+          <button
+            id="increment-modal"
             class="w-10 h-10 rounded-xl border border-gray-200 flex items-center justify-center text-gray-600 hover:bg-gray-50 transition-colors"
           >
             <i class="fa-solid fa-plus text-sm"></i>
@@ -1286,35 +1207,258 @@
           </p>
           <div class="grid grid-cols-4 text-center">
             <div>
-              <p id="modal-meal-calories" class="text-lg font-bold text-emerald-600">2152</p>
+              <p
+                id="modal-meal-calories"
+                class="text-lg font-bold text-emerald-600"
+              >
+                2152
+              </p>
               <p class="text-xs text-gray-400">Calories</p>
             </div>
             <div>
-              <p id="modal-meal-protien" class="text-lg font-bold text-blue-500">111g</p>
+              <p
+                id="modal-meal-protien"
+                class="text-lg font-bold text-blue-500"
+              >
+                111g
+              </p>
               <p class="text-xs text-gray-400">Protein</p>
             </div>
             <div>
-              <p id="modal-meal-carbs" class="text-lg font-bold text-amber-600">201g</p>
+              <p id="modal-meal-carbs" class="text-lg font-bold text-amber-600">
+                201g
+              </p>
               <p class="text-xs text-gray-400">Carbs</p>
             </div>
             <div>
-              <p id="modal-meal-fat" class="text-lg font-bold text-purple-500">132g</p>
+              <p id="modal-meal-fat" class="text-lg font-bold text-purple-500">
+                132g
+              </p>
               <p class="text-xs text-gray-400">Fat</p>
             </div>
           </div>
         </div>
 
         <div class="flex gap-3">
-          <button id="cancel-log-btn"
+          <button
+            id="cancel-log-btn"
             class="flex-1 py-2.5 rounded-xl border border-gray-200 text-sm font-semibold text-gray-600 hover:bg-gray-50 transition-colors"
           >
             Cancel
           </button>
-          <button id="log-meal-btn"
+          <button
+            id="log-meal-btn"
             class="flex-1 py-2.5 rounded-xl bg-blue-600 hover:bg-blue-700 text-white text-sm font-semibold flex items-center justify-center gap-2 transition-colors"
           >
             <i class="fa-solid fa-floppy-disk"></i> Log Meal
           </button>
+        </div>
+      </div>
+    </div>
+    <!-- Modal Overlay -->
+    <div
+      id="product-modal"
+      class="fixed inset-0 z-50 hidden bg-black/60 backdrop-blur-sm flex items-center justify-center p-4"
+    >
+      <div
+        class="relative w-full max-w-2xl max-h-[90vh] overflow-y-auto rounded-2xl bg-white shadow-2xl"
+      >
+        <!-- Close -->
+        <div class="p-6">
+          <div class="flex gap-6 mb-6">
+            <!-- Image -->
+            <div
+              class="w-32 h-32 rounded-2xl bg-gray-100 flex items-center justify-center overflow-hidden shrink-0"
+            >
+              <img
+                id="product-modal-img"
+                src=""
+                class="w-full h-full object-contain"
+                alt=""
+              />
+            </div>
+
+            <!-- Product -->
+            <div class="flex-1">
+              <p
+                id="modal-name"
+                class="text-sm text-emerald-600 font-semibold mb-1"
+              ></p>
+
+              <h2
+                id="modal-brand"
+                class="text-2xl font-bold text-gray-900 mb-2"
+              ></h2>
+
+              <div class="flex gap-3 flex-wrap">
+                <!-- Nutri -->
+                <div id="nutriScoreDiv" class="flex items-center gap-3 rounded-xl px-3 py-3">
+                  <span
+                    id="modal-nutri"
+                    class="w-8 h-8 rounded-lg text-white font-bold flex items-center justify-center uppercase"
+                  ></span>
+
+                  <div>
+                    <p class="font-bold">Nutri-Score</p>
+                    <p class="text-sm text-gray-500">Bad</p>
+                  </div>
+                </div>
+
+                <!-- Nova -->
+                <div id="novaScoreDiv"
+                  class="flex items-center gap-2 rounded-xl  px-3 py-3"
+                >
+                  <span
+                    id="modal-nova"
+                    class="w-8 h-8 rounded-full  text-white font-bold flex items-center justify-center"
+                  ></span>
+
+                  <div>
+                    <p class="font-bold uppercase">Nova</p>
+                    <p class="text-sm text-gray-500">Ultra-processed</p>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+          <div class="px-8 pb-8">
+            <div
+              class="rounded-2xl border bg-emerald-200 border-emerald-200 bg-emerald-50 p-6 mb-6"
+            >
+              <div class="flex items-center gap-2 mb-6">
+                <i class="fa-solid fa-chart-pie text-emerald-600"></i>
+
+                <h3
+                  class="font-bold text-gray-900 mb-4 flex items-center gap-2"
+                >
+                  Nutrition Facts
+                  <span class="text-gray-500 font-normal text-lg"
+                    >(per 100g)</span
+                  >
+                </h3>
+              </div>
+
+              <div class="text-center mb-8">
+                <p
+                  id="modal-calories"
+                  class="text-4xl font-bold text-gray-900"
+                ></p>
+
+                <p class="text-sm text-gray-500">Calories</p>
+              </div>
+              <div class="grid grid-cols-4 gap-8">
+                <!-- Protein -->
+                <div>
+                  <div
+                    class="h-3 bg-gray-200 rounded-full overflow-hidden mb-3"
+                  >
+                    <div
+                      id="bar-protein"
+                      class="h-full bg-emerald-500 rounded-full"
+                    ></div>
+                  </div>
+
+                  <p
+                    id="modal-protein"
+                    class="text-lg font-bold text-emerald-600 text-center"
+                  ></p>
+
+                  <p class="text-center text-xs text-gray-500">Protein</p>
+                </div>
+
+                <!-- Carbs -->
+                <div>
+                  <div
+                    class="h-3 bg-gray-200 rounded-full overflow-hidden mb-3"
+                  >
+                    <div
+                      id="bar-carbs"
+                      class="h-full bg-blue-500 rounded-full"
+                    ></div>
+                  </div>
+
+                  <p
+                    id="modal-carbs"
+                    class="text-lg font-bold text-blue-600 text-center"
+                  ></p>
+
+                  <p class="text-center text-xs text-gray-500">Carbs</p>
+                </div>
+
+                <!-- Fat -->
+                <div>
+                  <div
+                    class="h-3 bg-gray-200 rounded-full overflow-hidden mb-3"
+                  >
+                    <div
+                      id="bar-fat"
+                      class="h-full bg-purple-500 rounded-full"
+                    ></div>
+                  </div>
+
+                  <p
+                    id="modal-fat"
+                    class="text-lg font-bold text-purple-600 text-center"
+                  ></p>
+
+                  <p class="text-center text-xs text-gray-500">Fat</p>
+                </div>
+
+                <!-- Sugar -->
+                <div>
+                  <div
+                    class="h-3 bg-gray-200 rounded-full overflow-hidden mb-3"
+                  >
+                    <div
+                      id="bar-sugar"
+                      class="h-full bg-orange-500 rounded-full"
+                    ></div>
+                  </div>
+
+                  <p
+                    id="modal-sugar"
+                    class="text-lg font-bold text-orange-600 text-center"
+                  ></p>
+
+                  <p class="text-center text-gray-500">Sugar</p>
+                </div>
+              </div>
+
+              <div class="grid grid-cols-2 gap-4 text-center">
+                <div>
+                  <p
+                    id="modal-fiber"
+                    class="text-sm font-semibold text-gray-900"
+                  ></p>
+
+                  <p class="text-xs text-gray-500">Fiber</p>
+                </div>
+
+                <div>
+                  <p
+                    id="modal-sodium"
+                    class="text-sm font-semibold text-gray-900"
+                  ></p>
+
+                  <p class="text-xs text-gray-500">Salt</p>
+                </div>
+              </div>
+            </div>
+            <div class="mt-8 grid grid-cols-2 gap-4">
+              <button id="add-product-log"
+                class="add-product-to-log flex-1 py-3 bg-emerald-600 text-white rounded-xl font-semibold hover:bg-emerald-700 transition-all"
+              >
+                <i class="fa-solid fa-plus mr-2"></i>
+                Log This Food
+              </button>
+
+              <button id="cancel-product-log"
+                class="close-product-modal flex-1 py-3 bg-gray-100 text-gray-700 rounded-xl font-semibold hover:bg-gray-200 transition-all"
+              >
+                Close
+              </button>
+            </div>
+          </div>
         </div>
       </div>
     </div>
