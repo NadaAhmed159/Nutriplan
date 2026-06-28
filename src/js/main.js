@@ -427,6 +427,7 @@ function displayMeals() {
 </div>
         `;
     recipesGrid.className = "grid grid-cols-1 gap-5";
+    return;
   }
   const view = currentDisplayView.getAttribute("title");
   for (let i = 0; i < meals.length; i++) {
@@ -494,19 +495,19 @@ function displayMeals() {
     recipeCard.append(imgContainer, container);
 
     recipesGrid.append(recipeCard);
-    const productCards = document.querySelectorAll(".product-card");
-
-    productCards.forEach((element) => {
-      element.addEventListener("click", async function (e) {
-        console.log("logggg");
-
-        const product = await getProductByBarCode(
-          e.target.getAttribute("data-barcode"),
-        );
-        displayProductModal(product);
-      });
-    });
   }
+  //   const productCards = document.querySelectorAll(".product-card");
+  // console.log(productCards);
+
+  // productCards.forEach((element) => {
+  //   element.addEventListener("click", async function (e) {
+
+  //     const product = await getProductByBarCode(
+  //       e.target.getAttribute("data-barcode"),
+  //     );
+  //     displayProductModal(product);
+  //   });
+  // });
 }
 
 async function getMealMacros(meal) {
@@ -849,7 +850,7 @@ async function getMealDetails(e) {
   const backToMealsBtn = document.getElementById("back-to-meals-btn");
 
   backToMealsBtn.addEventListener("click", function () {
-     history.pushState(null, "home", "home");
+    history.pushState(null, "home", "home");
 
     mainSection.classList.remove("hidden");
     mealDetailsSection.classList.add("hidden");
@@ -1219,7 +1220,7 @@ function displayLogedItems() {
     const browseToMeals = document.getElementById("browseToMeals");
 
     browseToMeals.addEventListener("click", function () {
-     history.pushState(null, "home", "home");
+      history.pushState(null, "home", "home");
 
       currentNav.classList.add("text-gray-600", "hover:bg-gray-50");
       currentNav.classList.remove("bg-emerald-50", "text-emerald-700");
@@ -1228,7 +1229,7 @@ function displayLogedItems() {
       currentSection.classList.add("hidden");
 
       currentSection = document.getElementById("Meals");
-        currentNav=document.getElementById("Meals-Recipes")
+      currentNav = document.getElementById("Meals-Recipes");
       currentNav.classList.add("bg-emerald-50", "text-emerald-700");
       currentNav.classList.remove("text-gray-600", "hover:bg-gray-50");
       currentNav.children[1].classList.add("font-semibold");
@@ -1239,7 +1240,7 @@ function displayLogedItems() {
       "browseToscanProducts",
     );
     browseToscanProducts.addEventListener("click", function () {
-            history.replaceState(null, null, "products");
+      history.replaceState(null, null, "products");
 
       currentNav.classList.add("text-gray-600", "hover:bg-gray-50");
       currentNav.classList.remove("bg-emerald-50", "text-emerald-700");
@@ -1248,7 +1249,7 @@ function displayLogedItems() {
       currentSection.classList.add("hidden");
 
       currentSection = document.getElementById("products-section");
-        currentNav=document.getElementById("Product-Scanner")
+      currentNav = document.getElementById("Product-Scanner");
       currentNav.classList.add("bg-emerald-50", "text-emerald-700");
       currentNav.classList.remove("text-gray-600", "hover:bg-gray-50");
       currentNav.children[1].classList.add("font-semibold");
@@ -1443,8 +1444,7 @@ navLinks.forEach((element) => {
       displayLogedItems();
     } else if (currentNav.getAttribute("page-target") === "products-section") {
       history.replaceState(null, null, "products");
-    }
-    else history.pushState(null, "home", "home");
+    } else history.pushState(null, "home", "home");
   });
 });
 searchInput.addEventListener("input", async function () {
@@ -1499,6 +1499,14 @@ document.addEventListener("click", function (e) {
   ) {
     productModal.classList.add("hidden");
   }
+});
+productsGrid.addEventListener("click", async function (e) {
+  const card = e.target.closest(".product-card");
+  if (!card) return;
+
+  const barcode = card.getAttribute("data-barcode");
+  const product = await getProductByBarCode(barcode);
+  displayProductModal(product);
 });
 productSearchBtn.addEventListener("click", async function () {
   productsGrid.className = "grid grid-cols-1";
