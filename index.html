@@ -91,28 +91,31 @@
             Main Menu
           </p>
           <ul class="space-y-1">
-            <li>
+            <li class="navList">
               <a
+                id="Meals-Recipes"
                 class="nav-link flex items-center gap-3 px-3 py-2.5 bg-emerald-50 text-emerald-700 rounded-lg transition-all"
-                href="#"
+                page-target="Meals"
               >
                 <i class="fa-solid fa-utensils w-5"></i>
                 <span class="font-semibold">Meals & Recipes</span>
               </a>
             </li>
-            <li>
+            <li class="navList">
               <a
+                id="Product-Scanner"
                 class="nav-link flex items-center gap-3 px-3 py-2.5 text-gray-600 hover:bg-gray-50 rounded-lg transition-all"
-                href="#"
+                page-target="products-section"
               >
                 <i class="fa-solid fa-barcode w-5"></i>
                 <span class="font-medium">Product Scanner</span>
               </a>
             </li>
-            <li>
+            <li class="navList">
               <a
+                id="Food-Log"
                 class="nav-link flex items-center gap-3 px-3 py-2.5 text-gray-600 hover:bg-gray-50 rounded-lg transition-all"
-                href="#"
+                page-target="foodlog-section"
               >
                 <i class="fa-solid fa-clipboard-list w-5"></i>
                 <span class="font-medium">Food Log</span>
@@ -161,113 +164,113 @@
           </div>
         </div>
       </header>
-
-      <section
-        id="search-filters-section"
-        class="px-8 py-6 bg-white border-b border-gray-200 hidden"
-      >
-        <div class="mx-auto">
-          <div class="mb-6">
-            <div class="relative w-full">
-              <i
-                class="fa-solid fa-search absolute left-4 top-1/2 -translate-y-1/2 text-gray-400"
-              ></i>
-              <input
-                id="search-input"
-                type="text"
-                placeholder="Search recipes by name, ingredient, or cuisine..."
-                class="w-full pl-12 pr-4 py-3.5 border border-gray-300 rounded-xl focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500 outline-none transition-all text-sm"
-              />
+      <section id="Meals">
+        <section
+          id="search-filters-section"
+          class="px-8 py-6 bg-white border-b border-gray-200"
+        >
+          <div class="mx-auto">
+            <div class="mb-6">
+              <div class="relative w-full">
+                <i
+                  class="fa-solid fa-search absolute left-4 top-1/2 -translate-y-1/2 text-gray-400"
+                ></i>
+                <input
+                  id="search-input"
+                  type="text"
+                  placeholder="Search recipes by name, ingredient, or cuisine..."
+                  class="w-full pl-12 pr-4 py-3.5 border border-gray-300 rounded-xl focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500 outline-none transition-all text-sm"
+                />
+              </div>
             </div>
-          </div>
 
-          <div class="flex items-center gap-3 overflow-x-auto pb-2"
-          id="cuisine-grid"
-          >
-            <button
-              class="px-4 py-2 bg-emerald-600 text-white rounded-full font-medium text-sm whitespace-nowrap hover:bg-emerald-700 transition-all areaBtn"
-              data-value=""
-              id="allRecipesBtn"
-            >
-              All Recipes
-            </button>
-          </div>
-        </div>
-      </section>
-
-      <section id="meal-categories-section" class="px-8 py-6 bg-white hidden">
-        <div>
-          <div class="flex items-center justify-between mb-4">
-            <div>
-              <h2 class="text-xl font-bold text-gray-900">
-                Browse by Meal Type
-              </h2>
-              <p class="text-xs text-gray-500 mt-0.5">
-                Find the perfect recipe for any time of day
-              </p>
-            </div>
-            <button
-              class="text-emerald-600 font-medium text-sm hover:text-emerald-700 flex items-center gap-1"
-            >
-              View All <i class="fa-solid fa-chevron-right text-xs"></i>
-            </button>
-          </div>
-
-          <div id="categories-grid" class="grid grid-cols-6 gap-3">
             <div
-              class="category-card bg-gradient-to-br rounded-xl p-3 border hover:shadow-md cursor-pointer transition-all group from-emerald-500 to-green-500 text-white border-emerald-500 hover:border-emerald-600"
-              data-category="All"
-              id="all-types-div"
+              class="flex items-center gap-3 overflow-x-auto pb-2"
+              id="cuisine-grid"
             >
-              <div class="flex items-center gap-2.5">
-                <div
-                  class="text-white w-9 h-9 bg-gradient-to-br from-emerald-400 to-green-500 rounded-lg flex items-center justify-center group-hover:scale-110 transition-transform shadow-sm"
-                >
-                  <i class="fa-solid fa-utensils"></i>
-                </div>
-                <div>
-                  <h3 class="text-sm font-bold text-gray-900">All types</h3>
+              <button
+                class="px-4 py-2 bg-emerald-600 text-white rounded-full font-medium text-sm whitespace-nowrap hover:bg-emerald-700 transition-all areaBtn"
+                data-value=""
+                id="allRecipesBtn"
+              >
+                All Recipes
+              </button>
+            </div>
+          </div>
+        </section>
+
+        <section id="meal-categories-section" class="px-8 py-6 bg-white">
+          <div>
+            <div class="flex items-center justify-between mb-4">
+              <div>
+                <h2 class="text-xl font-bold text-gray-900">
+                  Browse by Meal Type
+                </h2>
+                <p class="text-xs text-gray-500 mt-0.5">
+                  Find the perfect recipe for any time of day
+                </p>
+              </div>
+              <button
+                class="text-emerald-600 font-medium text-sm hover:text-emerald-700 flex items-center gap-1"
+              >
+                View All <i class="fa-solid fa-chevron-right text-xs"></i>
+              </button>
+            </div>
+
+            <div id="categories-grid" class="grid grid-cols-6 gap-3">
+              <div
+                class="category-card bg-gradient-to-br rounded-xl p-3 border hover:shadow-md cursor-pointer transition-all group from-emerald-500 to-green-500 text-white border-emerald-500 hover:border-emerald-600"
+                data-category="All"
+                id="all-types-div"
+              >
+                <div class="flex items-center gap-2.5">
+                  <div
+                    class="text-white w-9 h-9 bg-gradient-to-br from-emerald-400 to-green-500 rounded-lg flex items-center justify-center group-hover:scale-110 transition-transform shadow-sm"
+                  >
+                    <i class="fa-solid fa-utensils"></i>
+                  </div>
+                  <div>
+                    <h3 class="text-sm font-bold text-gray-900">All types</h3>
+                  </div>
                 </div>
               </div>
             </div>
           </div>
-        </div>
-      </section>
+        </section>
 
-      <section id="all-recipes-section" class="px-8 py-8 bg-gray-50 hidden">
-        <div>
-          <div class="flex items-center justify-between mb-6">
-            <div>
-              <h2 class="text-2xl font-bold text-gray-900">All Recipes</h2>
-              <p id="recipes-count" class="text-sm text-gray-600 mt-1">
-                Showing 25 recipes
-              </p>
-            </div>
-            <div class="flex items-center gap-3">
-              <div class="flex bg-gray-200 rounded-lg p-1" id="view-toggle">
-                <button
-                  id="grid-view-btn"
-                  class="px-3 py-1.5 bg-white rounded-md shadow-sm"
-                  title="Grid View"
-                >
-                  <i class="fa-solid fa-table-cells text-gray-700"></i>
-                </button>
-                <button
-                  id="list-view-btn"
-                  class="px-3 py-1.5"
-                  title="List View"
-                >
-                  <i class="fa-solid fa-list text-gray-500"></i>
-                </button>
+        <section id="all-recipes-section" class="px-8 py-8 bg-gray-50">
+          <div>
+            <div class="flex items-center justify-between mb-6">
+              <div>
+                <h2 class="text-2xl font-bold text-gray-900">All Recipes</h2>
+                <p id="recipes-count" class="text-sm text-gray-600 mt-1">
+                  Showing 25 recipes
+                </p>
+              </div>
+              <div class="flex items-center gap-3">
+                <div class="flex bg-gray-200 rounded-lg p-1" id="view-toggle">
+                  <button
+                    id="grid-view-btn"
+                    class="px-3 py-1.5 bg-white rounded-md shadow-sm"
+                    title="Grid View"
+                  >
+                    <i class="fa-solid fa-table-cells text-gray-700"></i>
+                  </button>
+                  <button
+                    id="list-view-btn"
+                    class="px-3 py-1.5"
+                    title="List View"
+                  >
+                    <i class="fa-solid fa-list text-gray-500"></i>
+                  </button>
+                </div>
               </div>
             </div>
-          </div>
 
-          <div id="recipes-grid" class="grid grid-cols-4 gap-5">
+            <div id="recipes-grid" class="grid grid-cols-4 gap-5"></div>
           </div>
-        </div>
+        </section>
       </section>
-
       <section id="meal-details" class="px-8 py-8 bg-gray-50 hidden">
         <div class="max-w-7xl mx-auto">
           <!-- Back Button -->
@@ -329,7 +332,7 @@
           <!-- Action Buttons -->
           <div class="flex flex-wrap gap-3 mb-8">
             <button
-              id="log-meal-btn"
+              id="modal-btn"
               class="flex items-center gap-2 px-6 py-3 bg-blue-600 text-white rounded-xl font-semibold hover:bg-blue-700 transition-all"
               data-meal-id="52772"
             >
@@ -362,8 +365,8 @@
                       class="ingredient-checkbox w-5 h-5 text-emerald-600 rounded border-gray-300"
                     />
                     <span class="text-gray-700">
-                      <span class="font-medium text-gray-900">3/4 cup</span> soy
-                      sauce
+                      <span class="font-medium text-gray-900">3/4 cup</span>
+                      soy sauce
                     </span>
                   </div>
                   <div
@@ -694,7 +697,7 @@
                     </div>
                   </div>
 
-                    <div class="mt-6 pt-6 border-t border-gray-100">
+                  <div class="mt-6 pt-6 border-t border-gray-100">
                     <h3 class="text-sm font-semibold text-gray-900 mb-3">
                       Other
                     </h3>
@@ -707,7 +710,6 @@
                         <span class="text-gray-600">Sodium</span>
                         <span class="font-medium">1064mg</span>
                       </div>
-                      
                     </div>
                   </div>
                 </div>
@@ -720,7 +722,7 @@
       <!-- ============= PRODUCT SCANNER SECTION ============= -->
       <section
         id="products-section"
-        class="px-8 py-8 bg-gray-50 min-h-screen "
+        class="px-8 py-8 bg-gray-50 min-h-screen hidden"
       >
         <div class="max-w-7xl mx-auto">
           <!-- Search Header -->
@@ -985,7 +987,6 @@
             </div>
           </div>
 
-          <!-- Today's Summary with Progress -->
           <div
             id="foodlog-today-section"
             class="bg-white rounded-2xl p-6 mb-6 border-2 border-gray-200"
@@ -1005,7 +1006,9 @@
                   <span class="text-sm font-semibold text-gray-700"
                     >Calories</span
                   >
-                  <span class="text-sm text-gray-500">0 / 2000 kcal</span>
+                  <span class="text-sm text-gray-500"
+                    ><span id="total-log-calaroies"></span> / 2000 kcal</span
+                  >
                 </div>
                 <div class="w-full bg-gray-200 rounded-full h-2.5">
                   <div
@@ -1020,7 +1023,9 @@
                   <span class="text-sm font-semibold text-gray-700"
                     >Protein</span
                   >
-                  <span class="text-sm text-gray-500">0 / 50 g</span>
+                  <span class="text-sm text-gray-500"
+                    ><span id="total-log-protien"></span> / 50 g</span
+                  >
                 </div>
                 <div class="w-full bg-gray-200 rounded-full h-2.5">
                   <div
@@ -1033,7 +1038,9 @@
               <div class="bg-amber-50 rounded-xl p-4">
                 <div class="flex items-center justify-between mb-2">
                   <span class="text-sm font-semibold text-gray-700">Carbs</span>
-                  <span class="text-sm text-gray-500">0 / 250 g</span>
+                  <span class="text-sm text-gray-500"
+                    ><span id="total-log-carbs"></span> / 250 g</span
+                  >
                 </div>
                 <div class="w-full bg-gray-200 rounded-full h-2.5">
                   <div
@@ -1046,7 +1053,9 @@
               <div class="bg-purple-50 rounded-xl p-4">
                 <div class="flex items-center justify-between mb-2">
                   <span class="text-sm font-semibold text-gray-700">Fat</span>
-                  <span class="text-sm text-gray-500">0 / 65 g</span>
+                  <span class="text-sm text-gray-500"
+                    ><span id="total-log-fat"></span> / 65 g</span
+                  >
                 </div>
                 <div class="w-full bg-gray-200 rounded-full h-2.5">
                   <div
@@ -1061,27 +1070,46 @@
             <div class="border-t border-gray-200 pt-4">
               <div class="flex items-center justify-between mb-3">
                 <h4 class="text-sm font-semibold text-gray-700">
-                  Logged Items (0)
+                  Logged Items (<span id="logedItemsCount"></span>)
                 </h4>
                 <button
                   id="clear-foodlog"
                   class="text-red-500 hover:text-red-600 text-sm font-medium"
-                  style="display: none"
                 >
                   <i class="fa-solid fa-trash mr-1"></i>Clear All
                 </button>
               </div>
 
               <div id="logged-items-list" class="space-y-2">
-                <!-- Empty State -->
-                <div class="text-center py-8 text-gray-500">
-                  <i
-                    class="fa-solid fa-utensils text-4xl mb-3 text-gray-300"
-                  ></i>
-                  <p class="font-medium">No meals logged today</p>
-                  <p class="text-sm">
-                    Add meals from the Meals page or scan products
-                  </p>
+                <div
+                  class="flex flex-col items-center justify-center py-10 gap-3"
+                >
+                  <div
+                    class="w-16 h-16 rounded-full bg-gray-100 flex items-center justify-center"
+                  >
+                    <i class="fa-solid fa-utensils text-gray-300 text-2xl"></i>
+                  </div>
+                  <div class="text-center">
+                    <p class="font-semibold text-gray-700">
+                      No food logged today
+                    </p>
+                    <p class="text-sm text-gray-400 mt-1">
+                      Start tracking your nutrition by logging meals or scanning
+                      products
+                    </p>
+                  </div>
+                  <div class="flex gap-3 mt-2">
+                    <button
+                      class="flex items-center gap-2 bg-emerald-500 hover:bg-emerald-700 text-white text-sm font-semibold px-5 py-2.5 rounded-xl transition-colors"
+                    >
+                      <i class="fa-solid fa-plus"></i> Browse Recipes
+                    </button>
+                    <button
+                      class="flex items-center gap-2 bg-blue-600 hover:bg-blue-700 text-white text-sm font-semibold px-5 py-2.5 rounded-xl transition-colors"
+                    >
+                      <i class="fa-solid fa-barcode"></i> Scan Product
+                    </button>
+                  </div>
                 </div>
               </div>
             </div>
@@ -1112,13 +1140,13 @@
               class="quick-log-btn bg-white rounded-xl p-4 border-2 border-gray-200 hover:border-emerald-500 transition-all text-left flex items-center gap-4"
             >
               <div
-                class="w-12 h-12 rounded-xl bg-emerald-100 flex items-center justify-center"
+                class="w-12 h-12 bg-emerald-100 rounded-xl flex items-center justify-center flex-shrink-0"
               >
-                <i class="fa-solid fa-plus text-emerald-600 text-xl"></i>
+                <i class="fa-solid fa-chart-line text-emerald-500 text-lg"></i>
               </div>
               <div>
-                <p class="font-semibold text-gray-900">Log a Meal</p>
-                <p class="text-sm text-gray-500">Add from recipes</p>
+                <p class="text-xs text-gray-400">Weekly Average</p>
+                <p class="text-lg font-bold text-gray-900">10 kcal</p>
               </div>
             </button>
 
@@ -1126,13 +1154,13 @@
               class="quick-log-btn bg-white rounded-xl p-4 border-2 border-gray-200 hover:border-teal-500 transition-all text-left flex items-center gap-4"
             >
               <div
-                class="w-12 h-12 rounded-xl bg-teal-100 flex items-center justify-center"
+                class="w-12 h-12 bg-blue-100 rounded-xl flex items-center justify-center flex-shrink-0"
               >
-                <i class="fa-solid fa-barcode text-teal-600 text-xl"></i>
+                <i class="fa-solid fa-utensils text-blue-500 text-lg"></i>
               </div>
               <div>
-                <p class="font-semibold text-gray-900">Scan Product</p>
-                <p class="text-sm text-gray-500">Use barcode scanner</p>
+                <p class="text-xs text-gray-400">Total Items This Week</p>
+                <p class="text-lg font-bold text-gray-900">1 items</p>
               </div>
             </button>
 
@@ -1140,21 +1168,158 @@
               class="quick-log-btn bg-white rounded-xl p-4 border-2 border-gray-200 hover:border-purple-500 transition-all text-left flex items-center gap-4"
             >
               <div
-                class="w-12 h-12 rounded-xl bg-purple-100 flex items-center justify-center"
+                class="w-12 h-12 bg-purple-100 rounded-xl flex items-center justify-center flex-shrink-0"
               >
-                <i class="fa-solid fa-pencil text-purple-600 text-xl"></i>
+                <i class="fa-solid fa-bullseye text-purple-500 text-lg"></i>
               </div>
               <div>
-                <p class="font-semibold text-gray-900">Custom Entry</p>
-                <p class="text-sm text-gray-500">Add custom food</p>
+                <p class="text-xs text-gray-400">Days On Goal</p>
+                <p class="text-lg font-bold text-gray-900">0 / 7</p>
               </div>
             </button>
           </div>
         </div>
       </section>
     </div>
+    <!-- Weekly Overview Section -->
+    <div class="bg-white rounded-2xl p-6 shadow-sm">
 
+      <!-- Weekly Overview -->
+      <div class="mt-4 hidden">
+        <h2
+          class="flex items-center gap-2 text-lg font-bold text-gray-900 mb-6"
+        >
+          <i class="fa-solid fa-calendar-days text-blue-600"></i> Weekly
+          Overview
+        </h2>
+        <div class="grid grid-cols-7 gap-2 text-center">
+          <!-- Days: repeat per day -->
+          <div class="flex flex-col items-center gap-1">
+            <span class="text-xs text-gray-400">Sun</span>
+            <span class="text-sm font-bold text-gray-800">21</span>
+            <span class="text-sm text-gray-300">0</span>
+            <span class="text-xs text-gray-300">kcal</span>
+          </div>
+          <div class="flex flex-col items-center gap-1">
+            <span class="text-xs text-gray-400">Mon</span>
+            <span class="text-sm font-bold text-gray-800">22</span>
+            <span class="text-sm text-gray-300">0</span>
+            <span class="text-xs text-gray-300">kcal</span>
+          </div>
+          <div class="flex flex-col items-center gap-1">
+            <span class="text-xs text-gray-400">Tue</span>
+            <span class="text-sm font-bold text-gray-800">23</span>
+            <span class="text-sm text-gray-300">0</span>
+            <span class="text-xs text-gray-300">kcal</span>
+          </div>
+          <div class="flex flex-col items-center gap-1">
+            <span class="text-xs text-gray-400">Wed</span>
+            <span class="text-sm font-bold text-gray-800">24</span>
+            <span class="text-sm text-gray-300">0</span>
+            <span class="text-xs text-gray-300">kcal</span>
+          </div>
+          <div class="flex flex-col items-center gap-1">
+            <span class="text-xs text-gray-400">Thu</span>
+            <span class="text-sm font-bold text-gray-800">25</span>
+            <span class="text-sm text-gray-300">0</span>
+            <span class="text-xs text-gray-300">kcal</span>
+          </div>
+          <!-- Active day with kcal -->
+          <div class="flex flex-col items-center gap-1">
+            <span class="text-xs text-gray-400">Fri</span>
+            <span class="text-sm font-bold text-gray-800">26</span>
+            <span class="text-sm font-bold text-emerald-500">67</span>
+            <span class="text-xs text-emerald-500">kcal</span>
+            <span class="text-xs text-gray-400">1 items</span>
+          </div>
+          <!-- Today (highlighted) -->
+          <div
+            class="flex flex-col items-center gap-1 bg-indigo-50 rounded-xl py-2"
+          >
+            <span class="text-xs text-gray-400">Sat</span>
+            <span class="text-sm font-bold text-gray-800">27</span>
+            <span class="text-sm text-gray-300">0</span>
+            <span class="text-xs text-gray-300">kcal</span>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Log Meal Modal -->
+    <div
+      id="log-Modal"
+      class="fixed inset-0 bg-black backdrop-blur-sm flex items-center justify-center z-50 hidden"
+    >
+      <div class="bg-white  rounded-2xl shadow-xl w-full max-w-md mb-6 p-6">
+        <div class="flex items-center gap-3 mb-6">
+          <img id="modal-img" src="" alt="meal" class="w-16 h-16 rounded-xl object-cover" />
+          <div>
+            <h2 class="text-xl font-bold text-gray-900">Log This Meal</h2>
+            <p id="modal-meal-name" class="text-sm text-gray-500">Chicken Handi</p>
+          </div>
+        </div>
+
+        <p class="text-sm font-semibold text-gray-700 mb-3">
+          Number of Servings
+        </p>
+        <div class="flex items-center gap-3 mb-6">
+          <button id="decrement-modal"
+            class="w-10 h-10 rounded-xl border border-gray-200 flex items-center justify-center text-gray-600 hover:bg-gray-50 transition-colors"
+          >
+            <i class="fa-solid fa-minus text-sm"></i>
+          </button>
+          <div id="current-serving"
+            class="w-16 h-10 border border-gray-200 rounded-xl flex items-center justify-center font-bold text-gray-900"
+          >
+            1
+          </div>
+          <button id="increment-modal"
+            class="w-10 h-10 rounded-xl border border-gray-200 flex items-center justify-center text-gray-600 hover:bg-gray-50 transition-colors"
+          >
+            <i class="fa-solid fa-plus text-sm"></i>
+          </button>
+        </div>
+
+        <div class="bg-emerald-50 rounded-xl p-4 mb-6">
+          <p class="text-xs text-gray-500 mb-3">
+            Estimated nutrition per serving:
+          </p>
+          <div class="grid grid-cols-4 text-center">
+            <div>
+              <p id="modal-meal-calories" class="text-lg font-bold text-emerald-600">2152</p>
+              <p class="text-xs text-gray-400">Calories</p>
+            </div>
+            <div>
+              <p id="modal-meal-protien" class="text-lg font-bold text-blue-500">111g</p>
+              <p class="text-xs text-gray-400">Protein</p>
+            </div>
+            <div>
+              <p id="modal-meal-carbs" class="text-lg font-bold text-amber-600">201g</p>
+              <p class="text-xs text-gray-400">Carbs</p>
+            </div>
+            <div>
+              <p id="modal-meal-fat" class="text-lg font-bold text-purple-500">132g</p>
+              <p class="text-xs text-gray-400">Fat</p>
+            </div>
+          </div>
+        </div>
+
+        <div class="flex gap-3">
+          <button id="cancel-log-btn"
+            class="flex-1 py-2.5 rounded-xl border border-gray-200 text-sm font-semibold text-gray-600 hover:bg-gray-50 transition-colors"
+          >
+            Cancel
+          </button>
+          <button id="log-meal-btn"
+            class="flex-1 py-2.5 rounded-xl bg-blue-600 hover:bg-blue-700 text-white text-sm font-semibold flex items-center justify-center gap-2 transition-colors"
+          >
+            <i class="fa-solid fa-floppy-disk"></i> Log Meal
+          </button>
+        </div>
+      </div>
+    </div>
     <!-- Main JavaScript Entry Point -->
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
     <script type="module" src="./src/js/main.js"></script>
   </body>
 </html>
