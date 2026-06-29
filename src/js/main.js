@@ -132,6 +132,7 @@ const currentServing = document.getElementById("current-serving");
 const addProductLogModal = document.getElementById("add-product-log");
 const cancelProductModal = document.getElementById("cancel-product-log");
 const productModal = document.getElementById("product-modal");
+let modalItem = undefined;
 
 let productsScanSection = document.getElementById("products-section");
 const productSearchInput = document.getElementById("product-search-input");
@@ -532,7 +533,6 @@ async function getMealMacros(meal) {
   const data = await res.json();
   return data.data;
 }
-
 async function getMealDetails(e) {
   currentSection = document.getElementById("meal-details");
   const mealId = e.currentTarget.getAttribute("data-meal-id");
@@ -553,7 +553,7 @@ async function getMealDetails(e) {
   const percentageMacros = calcMacrosPercentage(mealMacros);
   mainSection.classList.add("hidden");
   mealDetailsSection.classList.remove("hidden");
-  history.replaceState(
+  history.pushState(
     null,
     null,
     `meal/${meal.name.trim().toLowerCase().replace(/\s+/g, "-")}`,
@@ -750,12 +750,12 @@ async function getMealDetails(e) {
                         <div class="w-3 h-3 rounded-full bg-emerald-500"></div>
                         <span class="text-gray-700">Protein</span>
                       </div>
-                      <span class="font-bold text-gray-900">${nut.perServing.protein}</span>
+                      <span class="font-bold text-gray-900">${nut.perServing.protein}g</span>
                     </div>
                     <div class="w-full bg-gray-100 rounded-full h-2">
                       <div
                         class="bg-emerald-500 h-2 rounded-full"
-                        style="width:${percentageMacros.proteinP > 100 ? 100 : percentageMacros.proteinP}%"
+                        style="width:${Math.min(percentageMacros.proteinP, 100)}%"
                       ></div>
                     </div>
 
@@ -769,7 +769,7 @@ async function getMealDetails(e) {
                     <div class="w-full bg-gray-100 rounded-full h-2">
                       <div
                         class="bg-blue-500 h-2 rounded-full"
-                        style="width: ${percentageMacros.carbsP > 100 ? 100 : percentageMacros.carbsP}%"
+                        style="width: ${Math.min(percentageMacros.carbsP, 100)}%"
                       ></div>
                     </div>
 
@@ -783,7 +783,7 @@ async function getMealDetails(e) {
                     <div class="w-full bg-gray-100 rounded-full h-2">
                       <div
                         class="bg-purple-500 h-2 rounded-full"
-                        style="width: ${percentageMacros.fatP > 100 ? 100 : percentageMacros.fatP}%"
+                        style="width: ${Math.min(percentageMacros.fatP, 100)}%"
                       ></div>
                     </div>
                     <div class="flex items-center justify-between">
@@ -796,7 +796,7 @@ async function getMealDetails(e) {
                     <div class="w-full bg-gray-100 rounded-full h-2">
                       <div
                         class="bg-orange-500 h-2 rounded-full"
-                        style="width: ${percentageMacros.fiberP > 100 ? 100 : percentageMacros.fiberP}%"
+                        style="width: ${Math.min(percentageMacros.fiberP, 100)}%"
                       ></div>
                     </div>
                     <div class="flex items-center justify-between">
@@ -809,7 +809,7 @@ async function getMealDetails(e) {
                     <div class="w-full bg-gray-100 rounded-full h-2">
                       <div
                         class="bg-pink-500 h-2 rounded-full"
-                        style="width: ${percentageMacros.sugarP > 100 ? 100 : percentageMacros.sugarP}%"
+                        style="width: ${Math.min(percentageMacros.sugarP, 100)}%"
                       ></div>
                     </div>
                     <div class="flex items-center justify-between">
@@ -822,7 +822,7 @@ async function getMealDetails(e) {
                     <div class="w-full bg-gray-100 rounded-full h-2">
                       <div
                         class="bg-red-500 h-2 rounded-full"
-                        style="width: ${percentageMacros.saturatedFatP > 100 ? 100 : percentageMacros.saturatedFatP}%"
+                        style="width: ${Math.min(percentageMacros.saturatedFatP, 100)}%"
                       ></div>
                     </div>
                   </div>
@@ -883,28 +883,14 @@ function displayModal(item) {
   modalMealProtien.innerText = item.mealMacros.protein;
   modalMealCarbs.innerText = item.mealMacros.carbs;
   modalMealFat.innerText = item.mealMacros.fat;
-
-  logMealBtn.addEventListener("click", function () {
-    modal.classList.add("hidden");
-    item.quantity = Number(currentServing.innerText);
-    item.loggedFrom = "Recipe";
-    logItem(item, new Date());
-    Swal.fire({
-      title: "Meal Logged!",
-      text: `${item.name}(${item.quantity}serving)has been added to you daily log.`,
-      html: `
-        <p class="text-emerald-600 font-medium">+${item.mealMacros.calories * item.quantity}calories</p>
-  `,
-      icon: "success",
-      showConfirmButton: false,
-      timer: 2000,
-    });
-  });
+  modalItem = structuredClone(item);
 }
+
 function extractYoutupeId(url) {
   return url.split("v=")[1];
 }
 function calcMacrosPercentage(macro) {
+  const calories = 2000;
   const protein = 50;
   const carbs = 250;
   const fat = 65;
@@ -912,12 +898,13 @@ function calcMacrosPercentage(macro) {
   const sugar = 50;
   const saturatedFat = 20;
   const percentageMacro = {
-    proteinP: (macro.protein / protein) * 100,
-    carbsP: (macro.carbs / carbs) * 100,
-    fatP: (macro.fat / fat) * 100,
-    fiberP: (macro.fiber / fiber) * 100,
-    sugarP: (macro.sugar / sugar) * 100,
-    saturatedFatP: (macro.saturatedFat / saturatedFat) * 100,
+    caloriesP: +((macro.calories / calories) * 100).toFixed(2),
+    proteinP: +((macro.protein / protein) * 100).toFixed(2),
+    carbsP: +((macro.carbs / carbs) * 100).toFixed(2),
+    fatP: +((macro.fat / fat) * 100).toFixed(2),
+    fiberP: +((macro.fiber / fiber) * 100).toFixed(2),
+    sugarP: +((macro.sugar / sugar) * 100).toFixed(2),
+    saturatedFatP: +((macro.saturatedFat / saturatedFat) * 100).toFixed(2),
   };
   return percentageMacro;
 }
@@ -1128,59 +1115,60 @@ function displayProductModal(replace) {
   productModalSodium.innerText = replace.nutrients.sodium.toFixed(1);
   replace.nutrients.saturatedFat = 0;
   const percentageMacros = calcMacrosPercentage(replace.nutrients);
+  const protienBar = document.getElementById("bar-protein");
+  const carbsBar = document.getElementById("bar-carbs");
+  const fatBar = document.getElementById("bar-fat");
+  const sugarBar = document.getElementById("bar-sugar");
 
-  addProductLogModal.addEventListener("click", function () {
-    productModal.classList.add("hidden");
+  protienBar.style.width = percentageMacros.proteinP + "%";
+  carbsBar.style.width = percentageMacros.carbsP + "%";
+  fatBar.style.width = percentageMacros.fatP + "%";
+  sugarBar.style.width = percentageMacros.sugarP + "%";
+  modalItem = {
+    itemName: replace.name,
+    itemThumbnail: replace.image,
 
-    const item = {
-      itemName: replace.name,
-      itemThumbnail: replace.image,
-
-      mealMacros: replace.nutrients,
-      percentageMacros: percentageMacros,
-    };
-    item.quantity = 1;
-    item.loggedFrom = "Product";
-
-    logItem(item, new Date());
-    Swal.fire({
-      title: "Meal Logged!",
-      text: `${item.name}(${item.quantity}serving)has been added to you daily log.`,
-      html: `
-        <p class="text-emerald-600 font-medium">+${item.mealMacros.calories * item.quantity}calories</p>
-  `,
-      icon: "success",
-      showConfirmButton: false,
-      timer: 2000,
-    });
-  });
+    mealMacros: replace.nutrients,
+    percentageMacros: percentageMacros,
+  };
 }
-
 function logItem(item, date) {
   logedStat.totalLogCalaroies += item.mealMacros.calories * item.quantity;
   logedStat.totalLogProtien += item.mealMacros.protein * item.quantity;
   logedStat.totalLogCarbs += item.mealMacros.carbs * item.quantity;
   logedStat.totalLogFat += item.mealMacros.fat * item.quantity;
 
-  logedStat.totalLogCalaroiesP += item.mealMacros.calories * item.quantity;
-  logedStat.totalLogProtienP += item.percentageMacros.protein * item.quantity;
-  logedStat.totalLogCarbsP += item.percentageMacros.carbs * item.quantity;
-  logedStat.totalLogFatP += item.percentageMacros.fat * item.quantity;
+  logedStat.totalLogCalaroiesP +=
+    item.percentageMacros.caloriesP * item.quantity;
+  logedStat.totalLogProtienP += item.percentageMacros.proteinP * item.quantity;
+  logedStat.totalLogCarbsP += item.percentageMacros.carbsP * item.quantity;
+  logedStat.totalLogFatP += item.percentageMacros.fatP * item.quantity;
+  itemsOfWeek.innerText = logedItems.length + " items";
   item.date = date;
   logedItems.push(item);
-  itemsOfWeek.innerText = logedItems.length + " items";
 
   localStorage.setItem("logedItems", JSON.stringify(logedItems));
   localStorage.setItem("logedStat", JSON.stringify(logedStat));
-  displayLogedItems();
 }
+function displayDailyProgress() {
+  const dailyCalories = document.getElementById("daily-calaroies-bar");
+  const dailyProtien = document.getElementById("daily-protien-bar");
+  const dailyCarbs = document.getElementById("daily-carbs-bar");
+  const dailyFat = document.getElementById("daily-fat-bar");
+  dailyCalories.style.width = Math.min(logedStat.totalLogCalaroiesP, 100) + "%";
+  dailyProtien.style.width = Math.min(logedStat.totalLogProtienP, 100) + "%";
+  dailyCarbs.style.width = Math.min(logedStat.totalLogCarbsP, 100) + "%";
+  dailyFat.style.width = Math.min(logedStat.totalLogFatP, 100) + "%";
+  caloriesSpan.innerText = logedStat.totalLogCalaroies.toFixed(1);
+  protienSpan.innerText = logedStat.totalLogProtien.toFixed(1);
+  carbsSpan.innerText = logedStat.totalLogCarbs.toFixed(1);
+  fatSpan.innerText = logedStat.totalLogFat.toFixed(1);
+}
+
+const logedItemsList = document.getElementById("logged-items-list");
+
 function displayLogedItems() {
-  const logedItemsList = document.getElementById("logged-items-list");
   logedItemsList.innerHTML = ``;
-  caloriesSpan.innerText = logedStat.totalLogCalaroies;
-  protienSpan.innerText = logedStat.totalLogProtien;
-  carbsSpan.innerText = logedStat.totalLogCarbs;
-  fatSpan.innerText = logedStat.totalLogFat;
   logedItemsCount.innerText = logedItems.length;
   if (logedItems.length == 0) {
     logedItemsList.innerHTML = `
@@ -1240,7 +1228,7 @@ function displayLogedItems() {
       "browseToscanProducts",
     );
     browseToscanProducts.addEventListener("click", function () {
-      history.replaceState(null, null, "products");
+      history.pushState(null, null, "products");
 
       currentNav.classList.add("text-gray-600", "hover:bg-gray-50");
       currentNav.classList.remove("bg-emerald-50", "text-emerald-700");
@@ -1335,42 +1323,50 @@ function displayLogedItems() {
 
     const deleteBtn = document.createElement("button");
     deleteBtn.className =
-      "text-gray-400 hover:text-red-500 transition-colors p-1";
+      "logTrash text-gray-400 hover:text-red-500 transition-colors p-1";
     const trashIcon = document.createElement("i");
     trashIcon.className = "fa-solid fa-trash text-sm";
+    deleteBtn.setAttribute("data-id", logedItems[i].date);
     deleteBtn.append(trashIcon);
 
     nutrition.append(kcalBlock, macros, deleteBtn);
     item.append(img, info, nutrition);
     logedItemsList.append(item);
-    deleteBtn.addEventListener("click", function () {
-      deleteFromLogs(i);
-    });
   }
 }
 
-function deleteFromLogs(index) {
+function deleteFromLogs(deletedItemID) {
+  let deletedItem;
+  let deletedIndex;
+  logedItems.forEach((element, index) => {
+    if (element.date == deletedItemID) {
+      deletedItem = element;
+      deletedIndex = index;
+    }
+  });
   logedStat.totalLogCalaroies -=
-    logedItems[index].mealMacros.calories * logedItems[index].quantity;
+    deletedItem.mealMacros.calories * deletedItem.quantity;
   logedStat.totalLogProtien -=
-    logedItems[index].mealMacros.protein * logedItems[index].quantity;
+    deletedItem.mealMacros.protein * deletedItem.quantity;
   logedStat.totalLogCarbs -=
-    logedItems[index].mealMacros.carbs * logedItems[index].quantity;
-  logedStat.totalLogFat -=
-    logedItems[index].mealMacros.fat * logedItems[index].quantity;
+    deletedItem.mealMacros.carbs * deletedItem.quantity;
+  logedStat.totalLogFat -= deletedItem.mealMacros.fat * deletedItem.quantity;
 
   logedStat.totalLogCalaroiesP -=
-    logedItems[index].mealMacros.calories * logedItems[index].quantity;
+    deletedItem.percentageMacros.caloriesP * deletedItem.quantity;
   logedStat.totalLogProtienP -=
-    logedItems[index].percentageMacros.protein * logedItems[index].quantity;
+    deletedItem.percentageMacros.proteinP * deletedItem.quantity;
   logedStat.totalLogCarbsP -=
-    logedItems[index].percentageMacros.carbs * logedItems[index].quantity;
+    deletedItem.percentageMacros.carbsP * deletedItem.quantity;
   logedStat.totalLogFatP -=
-    logedItems[index].percentageMacros.fat * logedItems[index].quantity;
+    deletedItem.percentageMacros.fatP * deletedItem.quantity;
 
-  logedItems.splice(index, 1);
+  logedItems.splice(deletedIndex, 1);
+  itemsOfWeek.innerText = logedItems.length + " items";
+
   localStorage.setItem("logedItems", JSON.stringify(logedItems));
   localStorage.setItem("logedStat", JSON.stringify(logedStat));
+  displayDailyProgress();
   displayLogedItems();
 }
 function clearAllLogs() {
@@ -1440,10 +1436,11 @@ navLinks.forEach((element) => {
     currentNav.children[1].classList.remove("font-medium");
     currentSection.classList.remove("hidden");
     if (currentNav.getAttribute("page-target") === "foodlog-section") {
-      history.replaceState(null, null, "foodlog");
+      history.pushState(null, null, "foodlog");
+      displayDailyProgress();
       displayLogedItems();
     } else if (currentNav.getAttribute("page-target") === "products-section") {
-      history.replaceState(null, null, "products");
+      history.pushState(null, null, "products");
     } else history.pushState(null, "home", "home");
   });
 });
@@ -1451,8 +1448,8 @@ searchInput.addEventListener("input", async function () {
   await searchMeal(searchInput.value);
 });
 
-currentBtnArea.addEventListener("click", await toggelAreaBtn);
-currentBtnCategory.addEventListener("click", await toggleCategory);
+currentBtnArea.addEventListener("click", toggelAreaBtn);
+currentBtnCategory.addEventListener("click", toggleCategory);
 areaBtns.forEach((element) => {
   element.addEventListener("click", toggelAreaBtn);
 });
@@ -1474,13 +1471,55 @@ toggleView.forEach((element) => {
     displayMeals();
   });
 });
+logMealBtn.addEventListener("click", function () {
+  modal.classList.add("hidden");
+  modalItem.quantity = Number(currentServing.innerText);
+  modalItem.loggedFrom = "Recipe";
+  currentServing.innerText = 1;
+  logItem(modalItem, new Date());
+  Swal.fire({
+    title: "Meal Logged!",
+    text: `${modalItem.name}(${modalItem.quantity}serving)has been added to you daily log.`,
+    html: `
+        <p class="text-emerald-600 font-medium">+${modalItem.mealMacros.calories * modalItem.quantity}calories</p>
+  `,
+    icon: "success",
+    showConfirmButton: false,
+    timer: 2000,
+  });
+  modalItem = undefined;
+});
+addProductLogModal.addEventListener("click", function () {
+  productModal.classList.add("hidden");
+
+  modalItem.quantity = 1;
+  modalItem.loggedFrom = "Product";
+
+  logItem(modalItem, new Date());
+  Swal.fire({
+    title: "Meal Logged!",
+    text: `${modalItem.name}(${
+      modalItem.quantity
+    }serving)has been added to you daily log.`,
+    html: `
+        <p class="text-emerald-600 font-medium">+${
+          modalItem.mealMacros.calories * modalItem.quantity
+        }calories</p>
+  `,
+    icon: "success",
+    showConfirmButton: false,
+    timer: 2000,
+  });
+  modalItem = undefined;
+});
+
 modalIncrement.addEventListener("click", function () {
-  if (Number(currentServing.innerText) + 0.5 <= 10)
-    currentServing.innerText = Number(currentServing.innerText) + 0.5;
+  if (Number(currentServing.innerText) + 1 <= 10)
+    currentServing.innerText = Number(currentServing.innerText) + 1;
 });
 modalDecrement.addEventListener("click", function () {
-  if (Number(currentServing.innerText) - 0.5 >= 0.5) {
-    currentServing.innerText = Number(currentServing.innerText) - 0.5;
+  if (Number(currentServing.innerText) - 1 >= 1) {
+    currentServing.innerText = Number(currentServing.innerText) - 1;
   }
 });
 document.addEventListener("click", function (e) {
@@ -1508,6 +1547,12 @@ productsGrid.addEventListener("click", async function (e) {
   const product = await getProductByBarCode(barcode);
   displayProductModal(product);
 });
+logedItemsList.addEventListener("click", async function (e) {
+  const trach = e.target.closest(".logTrash");
+  if (!trach) return;
+  deleteFromLogs(trach.getAttribute("data-id"));
+});
+
 productSearchBtn.addEventListener("click", async function () {
   productsGrid.className = "grid grid-cols-1";
   productsGrid.innerHTML = `
