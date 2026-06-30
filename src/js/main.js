@@ -896,8 +896,10 @@ async function getMealDetails(e) {
 
     mainSection.classList.remove("hidden");
     mealDetailsSection.classList.add("hidden");
+
     restCategoryCusin();
     await getMeals();
+    currentSection = document.getElementById("Meals");
   });
 
   const modalBtn = document.getElementById("modal-btn");
@@ -990,7 +992,6 @@ async function getProductByCategory(categoryName) {
   return data.results;
 }
 function filterProductByNutritionGrade(grade) {
-  console.log(currentProducts, grade);
   if (grade === "") {
     displayProducts(currentProducts);
     return;
