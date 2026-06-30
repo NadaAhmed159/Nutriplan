@@ -266,14 +266,15 @@ foodLogDate.innerText = today.toLocaleDateString("en-US", {
 });
 
 //&&&&&&&&&&&&&&&&&&&& start functions
-
+let searchTerm = "";
 async function searchMeal(term) {
   const res = await fetch(`${baseURL}/meals/search?q=${term}&page=1&limit=25`);
   const data = await res.json();
   meals = data.results;
   restCategoryCusin();
-
+  searchTerm = term;
   displayMeals(meals);
+  searchTerm = "";
 }
 
 async function getAllAreas() {
@@ -291,6 +292,8 @@ async function getAllAreas() {
   }
 }
 async function toggelAreaBtn(e) {
+  searchInput.value = "";
+
   currentBtnArea.classList.remove(
     "bg-emerald-600",
     "text-white",
@@ -369,6 +372,8 @@ async function getAllCategories() {
 }
 
 async function toggleCategory(e) {
+  searchInput.value = "";
+
   cat = currentBtnCategory.getAttribute("data-category");
 
   currentBtnCategory.classList.remove(
@@ -470,7 +475,7 @@ function displayMeals() {
 
   const recipesCount = document.getElementById("recipes-count");
   recipesGrid.innerHTML = "";
-  recipesCount.textContent = `Showing ${meals.length} ${chosenArea !== "" ? chosenArea : ""}${cat && cat !== "All" ? cat : ""} recipes`;
+  recipesCount.textContent = `Showing ${meals.length} ${chosenArea !== "" ? chosenArea : ""}${cat && cat !== "All" ? cat : ""} recipes${searchTerm ? ` for \"${searchTerm}\"` : ""}`;
   if (meals.length === 0) {
     recipesGrid.innerHTML = `
 <div class="flex flex-col items-center justify-center py-12 text-center">
@@ -576,6 +581,8 @@ async function getMealMacros(meal) {
   return data.data;
 }
 async function getMealDetails(e) {
+  searchInput.value = "";
+
   currentSection = document.getElementById("meal-details");
   const mealId = e.getAttribute("data-meal-id");
   const res = await fetch(`${baseURL}/meals/${mealId}`);
@@ -1631,6 +1638,7 @@ navLinks.forEach((element) => {
       history.pushState(null, null, "products");
     } else {
       history.pushState(null, "home", "home");
+      searchInput.value = "";
       (async function () {
         loadingOverlay.classList.remove("loading");
 
