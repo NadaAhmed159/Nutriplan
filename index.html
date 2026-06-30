@@ -1023,7 +1023,7 @@
 
           <!-- Weekly Overview -->
           <div
-            class="bg-white rounded-2xl p-6 mb-6 border-2 border-gray-200 hidden"
+            class="bg-white rounded-2xl p-6 mb-6 border-2 border-gray-200 px-8"
           >
             <h3 class="text-lg font-bold text-gray-900 mb-4">
               <i class="fa-solid fa-calendar-week text-indigo-500 mr-2"></i>
@@ -1032,13 +1032,8 @@
 
             <div
               id="weekly-chart"
-              class="h-64 bg-gray-50 rounded-xl flex items-center justify-center"
+              class="h-64 bg-gray-50 rounded-xl flex items-center justify-between px-6"
             >
-              <!-- Chart placeholder - JS will populate with Plotly -->
-              <div class="text-center text-gray-400">
-                <i class="fa-solid fa-chart-line text-4xl mb-2"></i>
-                <p>Weekly nutrition chart will appear here</p>
-              </div>
             </div>
           </div>
 
@@ -1054,7 +1049,7 @@
               </div>
               <div>
                 <p class="text-xs text-gray-400">Weekly Average</p>
-                <p class="text-lg font-bold text-gray-900">10 kcal</p>
+                <p id="weekly-avg" class="text-lg font-bold text-gray-900">10 kcal</p>
               </div>
             </button>
 
@@ -1082,74 +1077,12 @@
               </div>
               <div>
                 <p class="text-xs text-gray-400">Days On Goal</p>
-                <p class="text-lg font-bold text-gray-900">0 / 7</p>
+                <p id="days-on-goal" class="text-lg font-bold text-gray-900">0 / 7</p>
               </div>
             </button>
           </div>
         </div>
       </section>
-    </div>
-    <!-- Weekly Overview Section -->
-    <div class="bg-white rounded-2xl p-6 shadow-sm hidden">
-      <!-- Weekly Overview -->
-      <div class="mt-4 hidden">
-        <h2
-          class="flex items-center gap-2 text-lg font-bold text-gray-900 mb-6"
-        >
-          <i class="fa-solid fa-calendar-days text-blue-600"></i> Weekly
-          Overview
-        </h2>
-        <div class="grid grid-cols-7 gap-2 text-center">
-          <!-- Days: repeat per day -->
-          <div class="flex flex-col items-center gap-1">
-            <span class="text-xs text-gray-400">Sun</span>
-            <span class="text-sm font-bold text-gray-800">21</span>
-            <span class="text-sm text-gray-300">0</span>
-            <span class="text-xs text-gray-300">kcal</span>
-          </div>
-          <div class="flex flex-col items-center gap-1">
-            <span class="text-xs text-gray-400">Mon</span>
-            <span class="text-sm font-bold text-gray-800">22</span>
-            <span class="text-sm text-gray-300">0</span>
-            <span class="text-xs text-gray-300">kcal</span>
-          </div>
-          <div class="flex flex-col items-center gap-1">
-            <span class="text-xs text-gray-400">Tue</span>
-            <span class="text-sm font-bold text-gray-800">23</span>
-            <span class="text-sm text-gray-300">0</span>
-            <span class="text-xs text-gray-300">kcal</span>
-          </div>
-          <div class="flex flex-col items-center gap-1">
-            <span class="text-xs text-gray-400">Wed</span>
-            <span class="text-sm font-bold text-gray-800">24</span>
-            <span class="text-sm text-gray-300">0</span>
-            <span class="text-xs text-gray-300">kcal</span>
-          </div>
-          <div class="flex flex-col items-center gap-1">
-            <span class="text-xs text-gray-400">Thu</span>
-            <span class="text-sm font-bold text-gray-800">25</span>
-            <span class="text-sm text-gray-300">0</span>
-            <span class="text-xs text-gray-300">kcal</span>
-          </div>
-          <!-- Active day with kcal -->
-          <div class="flex flex-col items-center gap-1">
-            <span class="text-xs text-gray-400">Fri</span>
-            <span class="text-sm font-bold text-gray-800">26</span>
-            <span class="text-sm font-bold text-emerald-500">67</span>
-            <span class="text-xs text-emerald-500">kcal</span>
-            <span class="text-xs text-gray-400">1 items</span>
-          </div>
-          <!-- Today (highlighted) -->
-          <div
-            class="flex flex-col items-center gap-1 bg-indigo-50 rounded-xl py-2"
-          >
-            <span class="text-xs text-gray-400">Sat</span>
-            <span class="text-sm font-bold text-gray-800">27</span>
-            <span class="text-sm text-gray-300">0</span>
-            <span class="text-xs text-gray-300">kcal</span>
-          </div>
-        </div>
-      </div>
     </div>
 
     <!-- Log Meal Modal -->

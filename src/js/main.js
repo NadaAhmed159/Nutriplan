@@ -236,6 +236,8 @@ let fatSpan = document.getElementById("total-log-fat");
 
 let logedItemsCount = document.getElementById("logedItemsCount");
 const clearAllLogBtn = document.getElementById("clear-foodlog");
+const logedItemsList = document.getElementById("logged-items-list");
+const weeklyChart = document.getElementById("weekly-chart");
 
 let logedItems = JSON.parse(localStorage.getItem("logedItems")) || [];
 let logedStat = JSON.parse(localStorage.getItem("logedStat")) || {
@@ -248,8 +250,15 @@ let logedStat = JSON.parse(localStorage.getItem("logedStat")) || {
   totalLogCarbsP: 0,
   totalLogFatP: 0,
 };
-const itemsOfWeek = document.getElementById("items-of-week");
-itemsOfWeek.innerText = logedItems.length + " items";
+const foodLogDate = document.getElementById("foodlog-date");
+
+const today = new Date();
+foodLogDate.innerText = today.toLocaleDateString("en-US", {
+  weekday: "long",
+  month: "short",
+  day: "numeric",
+});
+
 //&&&&&&&&&&&&&&&&&&&& start functions
 
 async function searchMeal(term) {
@@ -1143,7 +1152,6 @@ function logItem(item, date) {
   logedStat.totalLogProtienP += item.percentageMacros.proteinP * item.quantity;
   logedStat.totalLogCarbsP += item.percentageMacros.carbsP * item.quantity;
   logedStat.totalLogFatP += item.percentageMacros.fatP * item.quantity;
-  itemsOfWeek.innerText = logedItems.length + " items";
   item.date = date;
   logedItems.push(item);
 
@@ -1164,8 +1172,6 @@ function displayDailyProgress() {
   carbsSpan.innerText = logedStat.totalLogCarbs.toFixed(1);
   fatSpan.innerText = logedStat.totalLogFat.toFixed(1);
 }
-
-const logedItemsList = document.getElementById("logged-items-list");
 
 function displayLogedItems() {
   logedItemsList.innerHTML = ``;
@@ -1362,12 +1368,13 @@ function deleteFromLogs(deletedItemID) {
     deletedItem.percentageMacros.fatP * deletedItem.quantity;
 
   logedItems.splice(deletedIndex, 1);
-  itemsOfWeek.innerText = logedItems.length + " items";
 
   localStorage.setItem("logedItems", JSON.stringify(logedItems));
   localStorage.setItem("logedStat", JSON.stringify(logedStat));
   displayDailyProgress();
   displayLogedItems();
+  displayWeeklyOverview();
+  displayWeeklyStat();
 }
 function clearAllLogs() {
   Swal.fire({
@@ -1401,10 +1408,134 @@ function clearAllLogs() {
       localStorage.removeItem("logedItems");
       localStorage.removeItem("logedStat");
 
+      displayDailyProgress();
       displayLogedItems();
+      displayWeeklyOverview();
+      displayWeeklyStat();
     }
   });
 }
+function displayWeeklyOverview() {
+  const today = new Date();
+  const startDay = new Date(today);
+  startDay.setDate(today.getDate() - 6);
+
+  weeklyChart.innerHTML = "";
+
+  for (let i = 0; i < 7; i++) {
+    const currentDay = new Date(startDay);
+    currentDay.setDate(startDay.getDate() + i);
+    let calories = 0;
+    let items = 0;
+
+    logedItems.forEach((item) => {
+      const itemDate = new Date(item.date);
+
+      if (itemDate.toDateString() === currentDay.toDateString()) {
+        calories += item.mealMacros.calories * item.quantity;
+        items++;
+      }
+    });
+    const isToday = currentDay.toDateString() === today.toDateString();
+
+    weeklyChart.innerHTML += `
+      <div class="${
+        isToday ? "bg-indigo-100 rounded-2xl p-4" : "p-4"
+      } text-center">
+
+        <p class="text-gray-500">
+          ${currentDay.toLocaleDateString("en-US", {
+            weekday: "short",
+          })}
+        </p>
+
+        <h2 class="font-bold text-l">
+          ${currentDay.getDate()}
+        </h2>
+
+        <h3 class="text-2xl font-bold ${calories == 0 ? "text-gray-300" : "text-green-600"}">
+          ${calories}
+        </h3>
+
+        <p class="${calories == 0 ? "text-gray-300" : "text-green-600"}">kcal</p>
+
+        <p class="text-gray-500">
+          ${items ? items : ""} ${items !== 0 ? "items" : ""}
+        </p>
+
+      </div>
+    `;
+  }
+}
+function displayWeeklyStat() {
+  const weeklyAvg = document.getElementById("weekly-avg");
+  const itemsOfWeek = document.getElementById("items-of-week");
+  const daysOnGoal = document.getElementById("days-on-goal");
+  let weeklyLog = buildWeeklyLog(logedItems);
+  let avg = calculateWeeklyCaloriesAverage(weeklyLog);
+  let days = checkDaysOnGoal(weeklyLog);
+  itemsOfWeek.innerText = logedItems.length + " items";
+  weeklyAvg.innerText = avg + " Kcal";
+  daysOnGoal.innerText = days + " /7";
+}
+
+function buildWeeklyLog(loggedItems) {
+  const result = {};
+  const toDateKey = (isoString) => {
+    const d = new Date(isoString);
+    return d.toISOString().split("T")[0];
+  };
+
+  loggedItems.forEach((item) => {
+    const key = toDateKey(item.date);
+    if (!result[key]) result[key] = [];
+    result[key].push(item);
+  });
+  const today = new Date();
+  today.setHours(0, 0, 0, 0);
+  const cutoff = new Date(today);
+  cutoff.setDate(cutoff.getDate() - 6);
+  Object.keys(result).forEach((key) => {
+    const keyDate = new Date(key);
+    keyDate.setHours(0, 0, 0, 0);
+    if (keyDate < cutoff) {
+      delete result[key];
+    }
+  });
+
+  return result;
+}
+function calculateWeeklyCaloriesAverage(weeklyLog) {
+  const dateKeys = Object.keys(weeklyLog);
+  if (dateKeys.length === 0) return 0;
+
+  let totalCalories = 0;
+
+  dateKeys.forEach((date) => {
+    const dayTotal = weeklyLog[date].reduce((sum, item) => {
+      return sum + (item.mealMacros?.calories || 0);
+    }, 0);
+    totalCalories += dayTotal;
+  });
+
+  return Math.round(totalCalories / 7);
+}
+
+function checkDaysOnGoal(weeklyLog, goalLimit = 2000) {
+  const onGoalDays = [];
+  Object.keys(weeklyLog).forEach((date) => {
+    const dayTotal = weeklyLog[date].reduce((sum, item) => {
+      return sum + (item.mealMacros?.calories || 0);
+    }, 0);
+
+    if (dayTotal <= goalLimit) {
+      onGoalDays.push(date);
+    }
+  });
+
+  return onGoalDays.length;
+}
+
 await (async function () {
   loadingOverlay.classList.remove("loading");
   await getAllAreas();
@@ -1437,8 +1568,11 @@ navLinks.forEach((element) => {
     currentSection.classList.remove("hidden");
     if (currentNav.getAttribute("page-target") === "foodlog-section") {
       history.pushState(null, null, "foodlog");
+
       displayDailyProgress();
       displayLogedItems();
+      displayWeeklyOverview();
+      displayWeeklyStat();
     } else if (currentNav.getAttribute("page-target") === "products-section") {
       history.pushState(null, null, "products");
     } else history.pushState(null, "home", "home");
