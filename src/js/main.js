@@ -10,6 +10,7 @@ let currentNav = document.getElementById("Meals-Recipes");
 let currentSection = document.getElementById("Meals");
 let mainSection = document.getElementById("Meals");
 //&&&&&&&&&&&&&&&&&&&& Meals & Recipes global variables
+const recipesGrid = document.getElementById("recipes-grid");
 const searchInput = document.getElementById("search-input");
 let serchSection = document.getElementById("search-filters-section");
 let mealCategoriesSection = document.getElementById("meal-categories-section");
@@ -270,8 +271,9 @@ async function searchMeal(term) {
   const res = await fetch(`${baseURL}/meals/search?q=${term}&page=1&limit=25`);
   const data = await res.json();
   meals = data.results;
+  restCategoryCusin();
+
   displayMeals(meals);
-  console.log(meals);
 }
 
 async function getAllAreas() {
@@ -331,47 +333,6 @@ async function toggelAreaBtn(e) {
   loadingOverlay.classList.remove("loading");
   await getMeals();
   loadingOverlay.classList.add("loading");
-}
-async function restCategoryCusin() {
-  cat = currentBtnCategory.getAttribute("data-category");
-
-  currentBtnCategory.classList.remove(
-    ...categoryStyles[cat].activeStyle.split(" "),
-  );
-  currentBtnCategory.classList.add(...categoryStyles[cat].style.split(" "));
-
-  currentBtnCategory = document.getElementById("all-types-div");
-
-  cat = currentBtnCategory.getAttribute("data-category");
-
-  currentBtnCategory.classList.add(
-    ...categoryStyles[cat].activeStyle.split(" "),
-  );
-  currentBtnCategory.classList.remove(...categoryStyles[cat].style.split(" "));
-  currentBtnArea.classList.remove(
-    "bg-emerald-600",
-    "text-white",
-    "hover:bg-emerald-700",
-  );
-  currentBtnArea.classList.add(
-    "bg-gray-100",
-    "text-gray-700",
-    "hover:bg-gray-200",
-  );
-  currentBtnArea = document.getElementById("allRecipesBtn");
-  currentBtnArea.classList.add(
-    "bg-emerald-600",
-    "text-white",
-    "hover:bg-emerald-700",
-  );
-  currentBtnArea.classList.remove(
-    "bg-gray-100",
-    "text-gray-700",
-    "hover:bg-gray-200",
-  );
-
-  chosenArea = "";
-  await getMeals();
 }
 async function getAllCategories() {
   let categoryGrid = document.getElementById("categories-grid");
@@ -450,6 +411,46 @@ async function toggleCategory(e) {
   await getMeals();
   loadingOverlay.classList.add("loading");
 }
+function restCategoryCusin() {
+  cat = currentBtnCategory.getAttribute("data-category");
+
+  currentBtnCategory.classList.remove(
+    ...categoryStyles[cat].activeStyle.split(" "),
+  );
+  currentBtnCategory.classList.add(...categoryStyles[cat].style.split(" "));
+
+  currentBtnCategory = document.getElementById("all-types-div");
+
+  cat = currentBtnCategory.getAttribute("data-category");
+
+  currentBtnCategory.classList.add(
+    ...categoryStyles[cat].activeStyle.split(" "),
+  );
+  currentBtnCategory.classList.remove(...categoryStyles[cat].style.split(" "));
+  currentBtnArea.classList.remove(
+    "bg-emerald-600",
+    "text-white",
+    "hover:bg-emerald-700",
+  );
+  currentBtnArea.classList.add(
+    "bg-gray-100",
+    "text-gray-700",
+    "hover:bg-gray-200",
+  );
+  currentBtnArea = document.getElementById("allRecipesBtn");
+  currentBtnArea.classList.add(
+    "bg-emerald-600",
+    "text-white",
+    "hover:bg-emerald-700",
+  );
+  currentBtnArea.classList.remove(
+    "bg-gray-100",
+    "text-gray-700",
+    "hover:bg-gray-200",
+  );
+
+  chosenArea = "";
+}
 
 async function getMeals(ingredient, category = cat, cusine = chosenArea) {
   let res;
@@ -467,7 +468,6 @@ async function getMeals(ingredient, category = cat, cusine = chosenArea) {
 function displayMeals() {
   history.pushState(null, "home", "home");
 
-  const recipesGrid = document.getElementById("recipes-grid");
   const recipesCount = document.getElementById("recipes-count");
   recipesGrid.innerHTML = "";
   recipesCount.textContent = `Showing ${meals.length} ${chosenArea !== "" ? chosenArea : ""}${cat && cat !== "All" ? cat : ""} recipes`;
@@ -551,18 +551,6 @@ function displayMeals() {
 
     recipesGrid.append(recipeCard);
   }
-  //   const productCards = document.querySelectorAll(".product-card");
-  // console.log(productCards);
-
-  // productCards.forEach((element) => {
-  //   element.addEventListener("click", async function (e) {
-
-  //     const product = await getProductByBarCode(
-  //       e.target.getAttribute("data-barcode"),
-  //     );
-  //     displayProductModal(product);
-  //   });
-  // });
 }
 
 async function getMealMacros(meal) {
@@ -589,7 +577,7 @@ async function getMealMacros(meal) {
 }
 async function getMealDetails(e) {
   currentSection = document.getElementById("meal-details");
-  const mealId = e.currentTarget.getAttribute("data-meal-id");
+  const mealId = e.getAttribute("data-meal-id");
   const res = await fetch(`${baseURL}/meals/${mealId}`);
   const data = await res.json();
   const meal = data.result;
@@ -903,11 +891,13 @@ async function getMealDetails(e) {
   `;
   const backToMealsBtn = document.getElementById("back-to-meals-btn");
 
-  backToMealsBtn.addEventListener("click", function () {
+  backToMealsBtn.addEventListener("click", async function () {
     history.pushState(null, "home", "home");
 
     mainSection.classList.remove("hidden");
     mealDetailsSection.classList.add("hidden");
+    restCategoryCusin();
+    await getMeals();
   });
 
   const modalBtn = document.getElementById("modal-btn");
@@ -1602,7 +1592,10 @@ sideBarToggle.addEventListener("click", function (e) {
   }
 });
 document.addEventListener("click", function (e) {
-  if ((e.target.closest("#sidebar-close-btn")||!sidebar.contains(e.target))&&!e.target.closest("#header-menu-btn")) {
+  if (
+    (e.target.closest("#sidebar-close-btn") || !sidebar.contains(e.target)) &&
+    !e.target.closest("#header-menu-btn")
+  ) {
     sidebarOverLay.classList.remove("active");
     sidebar.classList.remove("open");
   }
@@ -1640,7 +1633,9 @@ navLinks.forEach((element) => {
       (async function () {
         loadingOverlay.classList.remove("loading");
 
-        await restCategoryCusin();
+        restCategoryCusin();
+        await getMeals();
+
         loadingOverlay.classList.add("loading");
       })();
     }
@@ -1658,13 +1653,15 @@ areaBtns.forEach((element) => {
 categoryCards.forEach((element) => {
   element.addEventListener("click", toggleCategory);
 });
-recipeCards.forEach((element) => {
-  element.addEventListener("click", async function (e) {
-    loadingOverlay.classList.remove("loading");
-    await getMealDetails(e);
-    loadingOverlay.classList.add("loading");
-  });
+recipesGrid.addEventListener("click", async function (e) {
+  const card = e.target.closest(".recipe-card");
+  if (!card) return;
+
+  loadingOverlay.classList.remove("loading");
+  await getMealDetails(card);
+  loadingOverlay.classList.add("loading");
 });
+
 toggleView.forEach((element) => {
   element.addEventListener("click", function (e) {
     currentDisplayView.classList.remove("bg-white", "rounded-md", "shadow-sm");
