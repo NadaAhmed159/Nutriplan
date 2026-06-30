@@ -1,5 +1,10 @@
 const baseURL = "https://nutriplan-api.vercel.app/api";
 let loadingOverlay = document.getElementById("app-loading-overlay");
+let sideBarToggle = document.getElementById("header-menu-btn");
+let sidebarClose = document.getElementById("sidebar-close-btn");
+const sidebarOverLay = document.getElementById("sidebar-overlay");
+const sidebar = document.getElementById("sidebar");
+
 let navLinks = document.querySelectorAll(".navList");
 let currentNav = document.getElementById("Meals-Recipes");
 let currentSection = document.getElementById("Meals");
@@ -327,7 +332,47 @@ async function toggelAreaBtn(e) {
   await getMeals();
   loadingOverlay.classList.add("loading");
 }
+async function restCategoryCusin() {
+  cat = currentBtnCategory.getAttribute("data-category");
 
+  currentBtnCategory.classList.remove(
+    ...categoryStyles[cat].activeStyle.split(" "),
+  );
+  currentBtnCategory.classList.add(...categoryStyles[cat].style.split(" "));
+
+  currentBtnCategory = document.getElementById("all-types-div");
+
+  cat = currentBtnCategory.getAttribute("data-category");
+
+  currentBtnCategory.classList.add(
+    ...categoryStyles[cat].activeStyle.split(" "),
+  );
+  currentBtnCategory.classList.remove(...categoryStyles[cat].style.split(" "));
+  currentBtnArea.classList.remove(
+    "bg-emerald-600",
+    "text-white",
+    "hover:bg-emerald-700",
+  );
+  currentBtnArea.classList.add(
+    "bg-gray-100",
+    "text-gray-700",
+    "hover:bg-gray-200",
+  );
+  currentBtnArea = document.getElementById("allRecipesBtn");
+  currentBtnArea.classList.add(
+    "bg-emerald-600",
+    "text-white",
+    "hover:bg-emerald-700",
+  );
+  currentBtnArea.classList.remove(
+    "bg-gray-100",
+    "text-gray-700",
+    "hover:bg-gray-200",
+  );
+
+  chosenArea = "";
+  await getMeals();
+}
 async function getAllCategories() {
   let categoryGrid = document.getElementById("categories-grid");
   const res = await fetch(`${baseURL}/meals/categories`);
@@ -1550,6 +1595,18 @@ const categoryCards = document.querySelectorAll(".category-card");
 const productCategoryBtns = document.querySelectorAll(".product-category-btn");
 
 //&&&&&&&&&&&&&&&&&&&& start event listeners
+sideBarToggle.addEventListener("click", function (e) {
+  if (e.target.closest("#header-menu-btn")) {
+    sidebarOverLay.classList.add("active");
+    sidebar.classList.add("open");
+  }
+});
+document.addEventListener("click", function (e) {
+  if ((e.target.closest("#sidebar-close-btn")||!sidebar.contains(e.target))&&!e.target.closest("#header-menu-btn")) {
+    sidebarOverLay.classList.remove("active");
+    sidebar.classList.remove("open");
+  }
+});
 navLinks.forEach((element) => {
   element.addEventListener("click", function (e) {
     currentNav.classList.add("text-gray-600", "hover:bg-gray-50");
@@ -1566,6 +1623,9 @@ navLinks.forEach((element) => {
     currentNav.children[1].classList.add("font-semibold");
     currentNav.children[1].classList.remove("font-medium");
     currentSection.classList.remove("hidden");
+    sidebarOverLay.classList.remove("active");
+    sidebar.classList.remove("open");
+
     if (currentNav.getAttribute("page-target") === "foodlog-section") {
       history.pushState(null, null, "foodlog");
 
@@ -1575,7 +1635,15 @@ navLinks.forEach((element) => {
       displayWeeklyStat();
     } else if (currentNav.getAttribute("page-target") === "products-section") {
       history.pushState(null, null, "products");
-    } else history.pushState(null, "home", "home");
+    } else {
+      history.pushState(null, "home", "home");
+      (async function () {
+        loadingOverlay.classList.remove("loading");
+
+        await restCategoryCusin();
+        loadingOverlay.classList.add("loading");
+      })();
+    }
   });
 });
 searchInput.addEventListener("input", async function () {
